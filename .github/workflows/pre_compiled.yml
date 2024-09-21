@@ -27,7 +27,7 @@ jobs:
       - name: Install dependencies
         run: |
           .\run-install.bat
-          .\env\python.exe core.py "prerequisites" --models "True" --exe "True" --pretraineds_v1_f0 "False" --pretraineds_v2_f0 "True" --pretraineds_v1_nof0 "False" --pretraineds_v2_nof0 "False"
+          .\env\python.exe core.py "prerequisites" --models "True" --pretraineds_v1 "False" --pretraineds_v2 "True" --exe "True"
       - name: Clean up unnecessary files
         run: |
           Remove-Item -Path 'LICENSE', 'run-tensorboard.sh', 'run-install.sh', 'run-applio.sh', 'run-install.bat', 'requirements.txt', '.gitignore', '.github', '.git' -Recurse -Force -ErrorAction SilentlyContinue

@@ -19,7 +19,7 @@ jobs:
         with:
           ref: 3.2.5 
       - name: Download run-install.bat
-        run: wget https://raw.githubusercontent.com/IAHispano/Applio/main/run-install.bat -O run-install.bat
+        run: Invoke-WebRequest -Uri https://raw.githubusercontent.com/IAHispano/Applio/main/run-install.bat -OutFile run-install.bat
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:

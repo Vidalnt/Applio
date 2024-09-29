@@ -33,7 +33,6 @@
     "Model Architecture": "RVC പതിപ്പ്",
     "Version of the model architecture.": "മോഡലിന്റെ RVC പതിപ്പ്.",
     "Preprocess Dataset": "ഡാറ്റാസെറ്റ് പ്രൊസെസ് ചെയ്യുക",
-
     "Embedder Model": "Embedder Model",
     "Model used for learning speaker embedding.": "സ്പീക്കർ എംബെഡ്ഡിംഗ് പഠിപ്പിക്കാൻ ഉപയോഗിക്കുന്ന മോഡൽ.",
     "Extract": "എക്സ്ട്രാക്ട്",
@@ -74,11 +73,9 @@
     "Overtraining Detector Settings": "ഓവർട്രെയിനിംഗ് ഡിറ്റക്റ്റർ സെറ്റിംഗുകൾ",
     "Overtraining Threshold": "ഓവർട്രെയിനിംഗ് താഴ്ന്ന മിതം",
     "Set the maximum number of epochs you want your model to stop training if no improvement is detected.": "യാത്രാവധി പരിശോധിച്ചിട്ടില്ലാത്ത അഭിവൃദ്ധി നിരയെടുക്കുകയാണെങ്കിൽ നിങ്ങളുടെ മോഡൽ പരിശോധനയെന്നത് പ്രശിക്ഷണം നിലനിൽക്കാനുള്ള ഏറ്റവും ഉന്നത എപ്പോക്കുകൾ സജ്ജമാക്കുക.",
-    
     "Start Training": "പ്രശിക്ഷണം ആരംഭിക്കുക",
     "Stop Training & Restart Applio": "പ്രശിക്ഷണം നിർത്തുക & അപ്ലിയോ പുനഃപ്രാരംഭിക്കുക",
     "Generate Index": "ഇൻഡെക്സ് സൃഷ്ടിക്കുക",
-
     "Export Model": "എക്സ്പോർട്ട് മോഡൽ",
     "The button 'Upload' is only for google colab: Uploads the exported files to the ApplioExported folder in your Google Drive.": "'അപ്ലോഡ്' ബട്ടൺ കേവലം ഗൂഗിൾ കോളാബിന് മാത്രം: നിങ്ങളുടെ ഗൂഗിൾ ഡ്രൈവിലെ ApplioExported ഫോൾഡറിലേക്ക് എക്സ്പോർട്ട് ചെയ്യുന്നു.",
     "Exported Pth file": "എക്സ്പോർട്ട് ചെയ്ത Pth ഫയൽ",
@@ -86,7 +83,6 @@
     "Select the pth file to be exported": "എക്സ്പോർട്ട് ചെയ്യാൻ ആദ്യം pth ഫയൽ തിരഞ്ഞെടുക്കുക",
     "Select the index file to be exported": "എക്സ്പോർട്ട് ചെയ്യാൻ ആദ്യം ഇൻഡെക്സ് ഫയൽ തിരഞ്ഞെടുക്കുക",
     "Upload": "അപ്ലോഡ്",
-
     "Voice Model": "വോയ്സ് മോഡൽ",
     "Select the voice model to use for the conversion.": "കണ്വേർഷനിനായി ഉപയോഗിക്കാൻ വോയ്സ് മോഡലുകൾ തിരഞ്ഞെടുക്കുക.",
     "Index File": "ഇൻഡെക്സ് ഫയൽ",
@@ -122,10 +118,8 @@
     "Safeguard distinct consonants and breathing sounds to prevent electro-acoustic tearing and other artifacts. Pulling the parameter to its maximum value of 0.5 offers comprehensive protection. However, reducing this value might decrease the extent of protection while potentially mitigating the indexing effect.": "എല്ലാവര്‍ക്കും പ്രകടമായ കോൺസനന്റുകൾ ഒഴുകുന്നത് എന്നതുകൊണ്ടുതന്നെ ഇലക്ട്രോ-ഓക്കുസ്റ്റിക് കൊതിയും മറ്റു ആർട്ടിഫാക്ടുകളും പ്രതിരക്ഷിക്കുന്നതിനുള്ള അരികോട്. പാരാമീറ്ററിനെ അതിന്റെ 0.5 എന്നേക്കും ഉച്ചക്കൊണ്ട് കൂട്ടിക്കൊള്ളൽ സാമൂഹ്യപ്രതിരക്ഷ നൽകുന്നു. എന്നാല്‍, ഈ മൂല്യം കുറഞ്ഞാക്കാൻ സാധ്യതയുണ്ട്, പ്രതിരക്ഷണം താഴെ കുറഞ്ഞുകൂടാൻ സഹായകരമാവുക.",
     "Pitch extraction algorithm": "പിച്ച് എക്സ്ട്രാക്ഷൻ ആൾഗോരിതം",
     "Pitch extraction algorithm to use for the audio conversion. The default algorithm is rmvpe, which is recommended for most cases.": "ഓഡിയോ കൺവേർഷനിനായി ഉപയോഗിക്കേണ്ട പിച്ച് എക്സ്ട്രാക്ഷൻ ആൾഗോരിതം. സ്വതന്ത്ര ആൾഗോരിതത്താണ് rmvpe, അത് പലതരത്തിലുള്ള പ്രസ്താവനകളില്‍ ശിഫാരസ് ചെയ്യപ്പെടുന്നു.",
-    
     "Convert": "കൺവേർട്ട് ചെയ്യുക",
     "Export Audio": "ഓഡിയോ എക്സ്പോർട്ട് ചെയ്യുക",
-    
     "Batch": "ബാച്ച്",
     "Input Folder": "ഇൻപുട്ട് ഫോൾഡർ",
     "Select the folder containing the audios to convert.": "കൺവേർട്ട് ചെയ്യാൻ ഓഡിയോകളെ കാണുന്ന ഫോൾഡർ തിരഞ്ഞെടുക്കുക.",
@@ -133,9 +127,7 @@
     "Output Folder": "ഔട്ട്പുട്ട് ഫോൾഡർ",
     "Select the folder where the output audios will be saved.": "ഔട്ട്പുട്ട് ഓഡിയോകൾ സേവ്‌ചെയ്യപ്പെടുന്ന ഫോൾഡർ തിരഞ്ഞെടുക്കുക.",
     "Enter output path": "ഔട്ട്പുട്ട് പാത നൽകുക",
-    
     "Get information about the audio": "ഓഡിയോയുടെ കുറിപ്പ് നേടുക",
-
     "## Voice Blender": "## വോയ്സ് ബ്ലെന്ഡർ",
     "Select two voice models, set your desired blend percentage, and blend them into an entirely new voice.": "രണ്ട് വോയ്സ് മോഡലുകൾ തിരഞ്ഞെടുക്കുക, നിനക്ക് ആഗ്രഹിക്കുന്ന ബ്ലെന്റ് ശതകം സജ്ജീവമാക്കുക, അവയുടെ ബ്ലെന്റും പൂർണ്ണമായും പുതിയ ഒരു വോയ്സായാക്കുക.",
     "Voice Blender": "വോയ്സ് ബ്ലെന്ഡർ",
@@ -175,13 +167,12 @@
     "Search": "തിരയൽ",
     "Introduce the model name to search.": "തിരയുന്നതിനായി മോഡൽ പേര് അറിയിക്കുക.",
     "We couldn't find models by that name.": "അനുബന്ധമായ പേരിൽ മോഡൽസ് കണ്ടെത്താനായില്ല.",
-
     "Drag your .pth file and .index file into this space. Drag one and then the other.": "നിനക്ക് .pth ഫയലുകളും .index ഫയലുകളും ഇവിടെ ഡ്രാഗ് ചെയ്യുക. ഒന്നുകിട്ട് പിന്നെ മറ്റൊന്നു ഡ്രാഗ് ചെയ്യുക.",
     "TTS Voices": "TTS വോയ്സുകൾ",
     "Select the TTS voice to use for the conversion.": "മാറ്റത്തിനായി ഉപയോഗിക്കാൻ TTS വോയ്സ് തിരഞ്ഞെടുക്കുക.",
     "Text to Synthesize": "സിന്തിയസൈസ് ചെയ്യുന്ന ടെക്സ്റ്റ്",
     "Enter the text to synthesize.": "സിന്തിയസൈസ് ചെയ്യാൻ ടെക്സ്റ്റ് നൽകുക.",
-    "Or you can upload a .txt file": "അല്ലെങ്കിൽ .txt ഫയൽ അപ്‌ലോഡ് ചെയ്യാം",
+    "Upload a .txt file": "അല്ലെങ്കിൽ .txt ഫയൽ അപ്‌ലോഡ് ചെയ്യാം",
     "Enter text to synthesize": "സിന്തിയസൈസ് ചെയ്യാൻ ടെക്സ്റ്റ് നൽകുക",
     "Output Path for TTS Audio": "TTS ഓഡിയോക്ക് ഔട്ട്പുട്ട് പാത",
     "Output Path for RVC Audio": "RVC ഓഡിയോക്ക് ഔട്ട്പുട്ട് പാത",

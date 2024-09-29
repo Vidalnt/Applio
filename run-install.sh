@@ -11,42 +11,87 @@ prepare_install() {
         read -r r
         r=$(echo "$r" | tr '[:upper:]' '[:lower:]')
         if [ "$r" = "y" ]; then
+            chmod +x run-applio.sh  
             ./run-applio.sh && exit 1
         else
             echo "Ok! The installation will continue. Good luck!"
         fi
-        . .venv/bin/activate
-    else
-        echo "Creating venv..."
-        requirements_file="requirements.txt"
-        echo "Checking if python exists"
-        if command -v python3.10 > /dev/null 2>&1; then
-            py=$(which python3.10)
-            echo "Using python3.10"
+        if [ -f ".venv/bin/activate" ]; then
+            . .venv/bin/activate  
         else
-            if python --version | grep -qE "3\.(7|8|9|10)\."; then
-                py=$(which python)
-                echo "Using python"
-            else
-                echo "Please install Python3 or 3.10 manually."
-                exit 1
-            fi
+            echo "Venv exists but activation file not found, re-creating venv..."
+            rm -rf .venv
+            create_venv  
         fi
-        $py -m venv .venv
-        . .venv/bin/activate
-        echo "Installing pip version less than 24.1..."
-        python -m pip install "pip<24.1"
-        echo
-        echo "Installing Applio dependencies..."
-        python -m pip install -r requirements.txt
-        python -m pip install torch==2.3.1 torchvision torchaudio --upgrade --index-url https://download.pytorch.org/whl/cu121
-        finish
+    else
+        create_venv
     fi
 }
 
-# Function to finish installation (this should install missing dependencies)
+# Function to create the virtual environment and install dependencies
+create_venv() {
+    echo "Creating venv..."
+    requirements_file="requirements.txt"
+    echo "Checking if python exists"
+    if command -v python3.10 > /dev/null 2>&1; then
+        py=$(which python3.10)
+        echo "Using python3.10"
+    else
+        if python --version | grep -qE "3\.(7|8|9|10)\."; then
+            py=$(which python)
+            echo "Using python"
+        else
+            echo "Please install Python3 or 3.10 manually."
+            exit 1
+        fi
+    fi
+    # Try to create the env
+    $py -m venv .venv
+    if [ $? -ne 0 ]; then
+        echo "Error creating the virtual environment. Check Python installation or permissions."
+        exit 1
+    fi
+    . .venv/bin/activate
+    if [ $? -ne 0 ]; then
+        echo "Error activating the virtual environment. Check if it was created properly."
+        exit 1
+    fi
+
+    # Installs pip using ensurepip or get-pip.py
+    echo "Installing pip..."
+    python -m ensurepip --upgrade
+    if [ $? -ne 0 ]; then
+        echo "Error with ensurepip, attempting manual pip installation..."
+        curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+        python get-pip.py
+        if [ $? -ne 0 ];then
+            echo "Failed to install pip manually. Check permissions and internet connection."
+            exit 1
+        fi
+    fi
+    python -m pip install --upgrade pip
+    echo
+
+    echo "Installing ffmpeg..."
+    sudo apt update && sudo apt install -y ffmpeg
+    if [ $? -ne 0 ]; then
+        echo "Error installing ffmpeg. Check your system's package manager."
+        exit 1
+    fi
+
+    echo "Installing Applio dependencies..."
+    python -m pip install -r requirements.txt
+    if [ $? -ne 0 ]; then
+        echo "Error installing Applio dependencies."
+        exit 1
+    fi
+
+    python -m pip install torch==2.3.1 torchvision==0.18.1 torchaudio==2.3.1 --upgrade --index-url https://download.pytorch.org/whl/cu121 
+    finish
+}
+
+# Function to finish installation
 finish() {
-    # Check if required packages are installed and install them if not
     if [ -f "${requirements_file}" ]; then
         installed_packages=$(python -m pip freeze)
         while IFS= read -r package; do
@@ -66,7 +111,7 @@ finish() {
     exit 0
 }
 
-# Loop to the main menu
+# Main menu loop
 if [ "$(uname)" = "Darwin" ]; then
     if ! command -v brew >/dev/null 2>&1; then
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"

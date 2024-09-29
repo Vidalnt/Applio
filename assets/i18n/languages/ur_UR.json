@@ -155,7 +155,7 @@
   "Select the TTS voice to use for the conversion.": "تبدیلی کے لئے استعمال کرنے کے لئے TTS آواز منتخب کریں۔",
   "Text to Synthesize": "ترکیب کرنے کے لئے متن",
   "Enter the text to synthesize.": "ترکیب کرنے کے لئے متن درج کریں۔",
-  "Or you can upload a .txt file": "یا آپ .txt فائل اپ لوڈ کرسکتے ہیں",
+  "Upload a .txt file": "یا آپ .txt فائل اپ لوڈ کرسکتے ہیں",
   "Enter text to synthesize": "ترتیب دینے کے لئے متن درج کریں",
   "Output Path for TTS Audio": "ٹی ٹی ایس آڈیو کے لئے آؤٹ پٹ پتھ",
   "Output Path for RVC Audio": "آر وی سی آڈیو کے لئے آؤٹ پٹ پتھ",

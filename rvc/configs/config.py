@@ -131,13 +131,6 @@ class Config:
     def set_cuda_config(self):
         i_device = int(self.device.split(":")[-1])
         self.gpu_name = torch.cuda.get_device_name(i_device)
-        # Zluda
-        if self.gpu_name.endswith("[ZLUDA]"):
-            print("Zluda compatibility enabled, experimental feature.")
-            torch.backends.cudnn.enabled = False
-            torch.backends.cuda.enable_flash_sdp(False)
-            torch.backends.cuda.enable_math_sdp(True)
-            torch.backends.cuda.enable_mem_efficient_sdp(False)
         low_end_gpus = ["16", "P40", "P10", "1060", "1070", "1080"]
         if (
             any(gpu in self.gpu_name for gpu in low_end_gpus)

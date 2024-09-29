@@ -155,7 +155,7 @@
   "Select the TTS voice to use for the conversion.": "변환에 사용할 TTS 음성을 선택합니다.",
   "Text to Synthesize": "합성할 텍스트(Text to Synthesize)",
   "Enter the text to synthesize.": "합성할 텍스트를 입력합니다.",
-  "Or you can upload a .txt file": "또는 .txt 파일을 업로드할 수 있습니다.",
+  "Upload a .txt file": "또는 .txt 파일을 업로드할 수 있습니다.",
   "Enter text to synthesize": "합성할 텍스트 입력",
   "Output Path for TTS Audio": "TTS 오디오의 출력 경로",
   "Output Path for RVC Audio": "RVC 오디오의 출력 경로",

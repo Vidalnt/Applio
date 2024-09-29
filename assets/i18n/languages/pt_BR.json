@@ -200,7 +200,7 @@
   "Select the TTS voice to use for the conversion.": "Selecione a voz TTS a ser usada para a conversão.",
   "Text to Synthesize": "Texto para Sintetizar",
   "Enter the text to synthesize.": "Digite o texto para sintetizar.",
-  "Or you can upload a .txt file": "Ou você pode carregar um arquivo .txt",
+  "Upload a .txt file": "Ou você pode carregar um arquivo .txt",
   "Enter text to synthesize": "Digite o texto para sintetizar",
   "Output Path for TTS Audio": "Caminho de Saída para Áudio do TTS",
   "Output Path for RVC Audio": "Caminho de Saída para Áudio do RVC",

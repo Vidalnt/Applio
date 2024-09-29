@@ -2,7 +2,6 @@
   "VITS-based Voice Conversion focused on simplicity, quality and performance.": "Alat kloning suara terbaik, dioptimalkan secara cermat untuk kekuatan tak tertandingi, modularitas, dan pengalaman ramah pengguna.",
   "This section contains some extra utilities that often may be in experimental phases.": "Bagian ini berisi beberapa utilitas tambahan yang mungkin sering berada dalam tahap percobaan.",
   "Output Information": "informasi keluaran",
-
   "Inference": "Inference",
   "Train": "training model",
   "Extra": "bonus",
@@ -14,7 +13,6 @@
   "Download": "Unduh",
   "Report a Bug": "Laporkan Bug",
   "Settings": "Pengaturan",
-
   "Preprocess": "Proses awal",
   "Model Name": "Nama model",
   "Enter model name": "masukkan nama model",
@@ -28,7 +26,6 @@
   "Sampling Rate": "Tingkat Pengambilan Sampel",
   "Model Architecture": "Versi RVC",
   "Preprocess Dataset": "Kumpulan Data Praproses",
-
   "Extract": "Ekstrak",
   "Hop Length": "Panjang Lompatan",
   "Batch Size": "Ukuran Batch",
@@ -51,15 +48,12 @@
   "GPU Information": "Informasi GPU",
   "Pitch Guidance": "Panduan Lapangan/pitch",
   "Extract Features": "Ekstrak Fitur",
-
   "Start Training": "mulai Training",
   "Generate Index": "Menghasilkan Index",
-
   "Voice Model": "Model Suara",
   "Index File": "Berkas Indeks",
   "Refresh": "Muat ulang",
   "Unload Voice": "Bongkar Suara",
-
   "Single": "Sendiri",
   "Upload Audio": "Ungah Audio",
   "Select Audio": "Pilh Audio",
@@ -75,17 +69,14 @@
   "Pitch extraction algorithm": "Algoritma ekstraksi nada",
   "Convert": "Convert",
   "Export Audio": "Export Audio",
-
   "Batch": "Batch",
   "Input Folder": "Input berkas",
   "Enter input path": "Masukkan jalur masukan",
   "Output Folder": "Folder Keluaran",
   "Enter output path": "Masukkan jalur keluaran",
-
   "Get information about the audio": "Dapatkan informasi tentang audio",
   "Information about the audio file": "Informasi tentang file audio",
   "Waiting for information...": "Menunggu informasi...",
-
   "Model fusion": "Penggabungan model",
   "Weight for Model A": "Weight untuk model A",
   "Whether the model has pitch guidance": "Apakah model memiliki panduan nada",
@@ -95,54 +86,44 @@
   "Path to model": "Jalan Menuju Model",
   "Model information to be placed": "Informasi model yang akan ditempatkan",
   "Fusion": "Fusi",
-
   "Modify model information": "Ubah informasi model",
   "Path to Model": "Jalan Menuju Model",
   "Model information to be modified": "Informasi model yang akan dimodifikasi",
   "Save file name": "Simpan nama file",
   "Modify": "Ubah",
-
   "View model information": "tampilkan informasi model",
   "View": "tampilakan",
   "Model extraction": "Ekstraksi model",
   "Model conversion": "Konversi model",
   "Pth file": "file Pth",
   "Output of the pth file": "Keluaran dari file pth",
-
   "# How to Report an Issue on GitHub": "# Cara Melaporkan Masalah di GitHub",
   "1. Click on the 'Record Screen' button below to start recording the issue you are experiencing.": "1. Klik tombol 'Rekam Layar' di bawah untuk mulai merekam masalah yang Anda alami.",
   "2. Once you have finished recording the issue, click on the 'Stop Recording' button (the same button, but the label changes depending on whether you are actively recording or not).": "2. Once you have finished recording the issue, click on the 'Stop Recording' button (the same button, but the label changes depending on whether you are actively recording or not).",
   "3. Go to [GitHub Issues](https://github.com/IAHispano/Applio/issues) and click on the 'New Issue' button.": "3. pergi ke [GitHub Issues](https://github.com/IAHispano/Applio/issues) dan klik tombol 'Masalah Baru'.",
   "4. Complete the provided issue template, ensuring to include details as needed, and utilize the assets section to upload the recorded file from the previous step.": "4. Lengkapi templat masalah yang disediakan, pastikan untuk menyertakan detail sesuai kebutuhan, dan manfaatkan bagian aset untuk mengunggah file rekaman dari langkah sebelumnya.",
-
   "Record Screen": "Rekam layar",
   "Record": "Rekam",
   "Stop Recording": "Berhenti merekam",
-
   "Introduce the model .pth path": "Perkenalkan jalur model .pth",
   "See Model Information": "Lihat informasi model",
-
   "## Download Model": "## Unduh Model",
   "Model Link": "Tautan model",
   "Introduce the model link": "Perkenalkan tautan model",
   "Download Model": "Unduh Model",
   "## Drop files": "## masukkan file ",
   "Drag your .pth file and .index file into this space. Drag one and then the other.": "Seret file .pth dan file .index ke dalam ruang ini. Seret yang pertama, lalu yang lainnya.",
-
   "TTS Voices": "suara TTS",
   "Text to Synthesize": "Text ke disintesis",
-  "Or you can upload a .txt file": "Atau Anda dapat mengunggah file .txt",
+  "Upload a .txt file": "Atau Anda dapat mengunggah file .txt",
   "Enter text to synthesize": "Masukkan teks untuk disintesis",
   "Output Path for TTS Audio": "Jalur Keluaran untuk Audio TTS",
   "Output Path for RVC Audio": "Jalur Keluaran untuk Audio RVC",
-
   "Enable Applio integration with Discord presence": "Aktifkan integrasi Applio dengan kehadiran Discord",
   "Enable Applio integration with applio.org/models using flask": "Aktifkan integrasi Applio dengan applio.org/models menggunakan flask",
   "Theme": "Tema (Diperlukan mulai ulang)",
-
   "Plugin Installer": "Penginstal Plugin",
   "Drag your plugin.zip to install it": "Seret plugin.zip Anda untuk menginstalnya",
-
   "Version Checker": "Pemeriksa versi",
   "Check for updates": "Periksa pembaruan"
 }

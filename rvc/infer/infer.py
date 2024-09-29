@@ -285,9 +285,8 @@ class VoiceConverter:
                 self.tgt_sr = resample_sr
 
             if split_audio:
-                result, chunks, timestamps = process_audio(audio, self.tgt_sr)
-                if result == "Error":
-                    return "Error with Split Audio", None
+                chunks, intervals = process_audio(audio, 16000)
+                print(f"Audio split into {len(chunks)} chunks for processing.")
             else:
                 chunks = []
                 chunks.append(audio)
@@ -317,9 +316,7 @@ class VoiceConverter:
                     print(f"Converted audio chunk {len(converted_chunks)}")
 
             if split_audio:
-                self.tgt_sr, audio_opt = merge_audio(
-                    converted_chunks, timestamps, self.tgt_sr
-                )
+                audio_opt = merge_audio(converted_chunks, intervals, 16000, self.tgt_sr)
             else:
                 audio_opt = converted_chunks[0]
 

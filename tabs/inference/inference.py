@@ -4,6 +4,7 @@ import regex as re
 import shutil
 import datetime
 import json
+import torch
 
 from core import (
     run_infer_script,
@@ -173,7 +174,11 @@ def output_path_fn(input_audio_path):
     return output_path
 
 
-def change_choices():
+def change_choices(model):
+    if model:
+        speakers = get_speakers_id(model)
+    else:
+        speakers = 0
     names = [
         os.path.join(root, file)
         for root, _, files in os.walk(model_root_relative, topdown=False)
@@ -204,6 +209,14 @@ def change_choices():
         {"choices": sorted(names), "__type__": "update"},
         {"choices": sorted(indexes_list), "__type__": "update"},
         {"choices": sorted(audio_paths), "__type__": "update"},
+        {
+            "choices": (
+                sorted(speakers)
+                if speakers is not None and isinstance(speakers, (list, tuple))
+                else []
+            ),
+            "__type__": "update",
+        },
     )
 
 
@@ -299,6 +312,16 @@ def refresh_embedders_folders():
     return custom_embedders
 
 
+def get_speakers_id(model):
+    if model:
+        model_data = torch.load(model, map_location="cpu")
+        speakers_id = model_data.get("speakers_id", 0)
+        if speakers_id:
+            return list(range(speakers_id))
+        else:
+            return [0]
+
+
 # Inference tab
 def inference_tab():
     default_weight = names[0] if names else None
@@ -379,6 +402,13 @@ def inference_tab():
                     info=i18n("Select the format to export the audio."),
                     choices=["WAV", "MP3", "FLAC", "OGG", "M4A"],
                     value="WAV",
+                    interactive=True,
+                )
+                sid = gr.Dropdown(
+                    label=i18n("Speaker ID"),
+                    info=i18n("Select the speaker ID to use for the conversion."),
+                    choices=get_speakers_id(model_file.value),
+                    value=0,
                     interactive=True,
                 )
                 split_audio = gr.Checkbox(
@@ -1005,6 +1035,13 @@ def inference_tab():
                     info=i18n("Select the format to export the audio."),
                     choices=["WAV", "MP3", "FLAC", "OGG", "M4A"],
                     value="WAV",
+                    interactive=True,
+                )
+                sid_batch = gr.Dropdown(
+                    label=i18n("Speaker ID"),
+                    info=i18n("Select the speaker ID to use for the conversion."),
+                    choices=get_speakers_id(model_file.value),
+                    value=0,
                     interactive=True,
                 )
                 split_audio_batch = gr.Checkbox(
@@ -1906,11 +1943,12 @@ def inference_tab():
     )
     refresh_button.click(
         fn=change_choices,
-        inputs=[],
+        inputs=[model_file],
         outputs=[
             model_file,
             index_file,
             audio,
+            sid,
         ],
     )
     audio.change(
@@ -2034,6 +2072,7 @@ def inference_tab():
             delay_seconds,
             delay_feedback,
             delay_mix,
+            sid,
         ],
         outputs=[vc_output1, vc_output2],
     )
@@ -2099,6 +2138,7 @@ def inference_tab():
             delay_seconds_batch,
             delay_feedback_batch,
             delay_mix_batch,
+            sid_batch,
         ],
         outputs=[vc_output3],
     )

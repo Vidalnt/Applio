@@ -3,7 +3,6 @@
   "This section contains some extra utilities that often may be in experimental phases.": "Цей розділ містить деякі додаткові утиліти, які часто можуть перебувати в експериментальних стадіях.",
   "Output Information": "Вихідна інформація",
   "The output information will be displayed here.": "Тут буде відображена вихідна інформація.",
-
   "Inference": "Заміна голосу",
   "Train": "Навчання моделі",
   "Extra": "Додатково",
@@ -15,7 +14,6 @@
   "Download": "Завантажити",
   "Report a Bug": "Повідомити про помилку",
   "Settings": "Параметри",
-
   "Preprocess": "Обробка",
   "Model Name": "Назва моделі",
   "Name of the new model.": "Назва нової моделі.",
@@ -35,7 +33,6 @@
   "Model Architecture": "Версія RVC",
   "Version of the model architecture.": "Версія моделі RVC.",
   "Preprocess Dataset": "Обробити датасет",
-
   "Embedder Model": "Модель розгортання",
   "Model used for learning speaker embedding.": "Модель, що використовується для навчання динаміки голосу.",
   "Extract": "Видобування",
@@ -78,11 +75,9 @@
   "Set the maximum number of epochs you want your model to stop training if no improvement is detected.": "Встановіть максимальну кількість епох, через яку модель припинить навчання, якщо не буде виявлено ознак прогрессу.",
   "Sync Graph": "Синхронізація графіків",
   "Synchronize the graph of the tensorbaord. Only enable this setting if you are training a new model.": "Синхронізувати графіки «tensorbaord» для відображення процесу навчання. Використовуйте цей параметр, тільки якщо ви навчаєте нову модель.",
-
   "Start Training": "Почати навчання",
   "Stop Training & Restart Applio": "Зупинити навчання та Перезапустити Applio",
   "Generate Index": "Згенерувати індекс",
-
   "Export Model": "Експортувати модель",
   "The button 'Upload' is only for google colab: Uploads the exported files to the ApplioExported folder in your Google Drive.": "Кнопка «Завантажити» призначена лише для google colab: Завантажує експортовані файли до папки ApplioExported у вашому Google Диску.",
   "Exported Pth file": "Експортований Pth файл",
@@ -90,14 +85,12 @@
   "Select the pth file to be exported": "Виберіть pth файл для експорту",
   "Select the index file to be exported": "Виберіть файл індексу для експорту",
   "Upload": "Завантажити",
-
   "Voice Model": "Голосова модель",
   "Select the voice model to use for the conversion.": "Виберіть модель голосу, яку буде використано для перетворення.",
   "Index File": "Індекс файл",
   "Select the index file to use for the conversion.": "Виберіть індекс, який буде використано для перетворення.",
   "Refresh": "Оновити",
   "Unload Voice": "Скинути голос",
-
   "Single": "Один файл",
   "Upload Audio": "Завантажити аудіо",
   "Select Audio": "Виберіть Аудіо",
@@ -129,10 +122,8 @@
   "Safeguard distinct consonants and breathing sounds to prevent electro-acoustic tearing and other artifacts. Pulling the parameter to its maximum value of 0.5 offers comprehensive protection. However, reducing this value might decrease the extent of protection while potentially mitigating the indexing effect.": "Захист чіткості приголосних і звуків дихання для запобігання електроакустичного розриву та інших артефактів. Збільшення цього параметра до максимального значення 0,5 забезпечує комплексний захист. Однак зменшення цього значення може зменшити ступінь захисту, а також потенційно послабити ефект індексування.",
   "Pitch extraction algorithm": "Алгоритм виділення тембру",
   "Pitch extraction algorithm to use for the audio conversion. The default algorithm is rmvpe, which is recommended for most cases.": "Алгоритм виділення висоти тону голосу, який використовуватиметься для перетворення аудіо. ('pm': швидке перетворення, але нижча якість звучання; 'harvest': кращі басові тембри, але дуже повільний). Алгоритм за замовчуванням - rmvpe, який рекомендується для більшості випадків.",
-
   "Convert": "Перетворити",
   "Export Audio": "Експорт аудіо",
-
   "Batch": "Група файлів",
   "Input Folder": "Вхідна тека",
   "Select the folder containing the audios to convert.": "Виберіть теку, що містить аудіозаписи для перетворення.",
@@ -140,9 +131,7 @@
   "Output Folder": "Вихідна тека",
   "Select the folder where the output audios will be saved.": "Виберіть теку, куди будуть збережені вихідні аудіозаписи.",
   "Enter output path": "Введіть шлях для збереження",
-
   "Get information about the audio": "Отримати інформацію про аудіо",
-
   "## Voice Blender": "Голосовий мікшер",
   "Select two voice models, set your desired blend percentage, and blend them into an entirely new voice.": "Виберіть дві моделі голосу, встановіть бажаний відсоток змішування і змішайте їх в абсолютно новий голос.",
   "Voice Blender": "Голосовий мікшер",
@@ -163,20 +152,16 @@
   "Model conversion": "Перетворення моделі",
   "Pth file": "Pth файл",
   "Output of the pth file": "Вихід pth файлу",
-
   "# How to Report an Issue on GitHub": "# Як повідомити про проблему на GitHub",
   "1. Click on the 'Record Screen' button below to start recording the issue you are experiencing.": "1. Натисніть кнопку «Записати екран» нижче, щоб почати запис проблеми, з якою ви зіткнулися.",
   "2. Once you have finished recording the issue, click on the 'Stop Recording' button (the same button, but the label changes depending on whether you are actively recording or not).": "2. Після того, як ви закінчите запис помилки, натисніть кнопку «Зупинити запис» (та сама кнопка, але мітка змінюється залежно від того, активно ви записуєте чи ні).",
   "3. Go to [GitHub Issues](https://github.com/IAHispano/Applio/issues) and click on the 'New Issue' button.": "3. Перейдіть до [GitHub Issues](https://github.com/IAHispano/Applio/issues) і натисніть кнопку 'New Issue'.",
   "4. Complete the provided issue template, ensuring to include details as needed, and utilize the assets section to upload the recorded file from the previous step.": "4. Заповніть наданий шаблон про проблему, обов'язково включивши деталі за потреби, і скористайтеся розділом активів, щоб завантажити записаний файл з попереднього кроку.",
-  
   "Record Screen": "Записати екран",
   "Record": "Запис",
   "Stop Recording": "Зупинити запис екрану",
-
   "Introduce the model .pth path": "Вкажіть шлях до .pth файлу моделі",
   "See Model Information": "Перегляд інформації про модель",
-
   "## Download Model": "Завантажити модель",
   "Model Link": "Посилання на модель",
   "Introduce the model link": "Введіть посилання на модель",
@@ -190,18 +175,16 @@
   "## Download Pretrained Models": "Завантажити підготовлену модель",
   "Select the pretrained model you want to download.": "Виберіть попередньо навчену модель, яку ви хочете завантажити.",
   "And select the sampling rate": "І виберіть частоту дискретизації.",
-
   "TTS Voices": "Голоси TTS",
   "TTS Speed": "Швидкість TTS",
   "Increase or decrease TTS speed.": "Збільшити або зменшити швидкість синтезу мови.",
   "Select the TTS voice to use for the conversion.": "Виберіть голос синтезу мови, який буде використано для перетворення.",
   "Text to Synthesize": "Текст для синтезу",
   "Enter the text to synthesize.": "Введіть текст для синтезу.",
-  "Or you can upload a .txt file": "Або ви можете завантажити файл .txt",
+  "Upload a .txt file": "Або ви можете завантажити файл .txt",
   "Enter text to synthesize": "Введіть текст для синтезу",
   "Output Path for TTS Audio": "Вихідний шлях для TTS аудіо файлу",
   "Output Path for RVC Audio": "Вихідний шлях для RVC аудіо файлу",
-
   "Enable Applio integration with Discord presence": "Увімкнути Applio інтеграцію з Discord активністю",
   "It will activate the possibility of displaying the current Applio activity in Discord.": "Це активує можливість відображати поточну активність Applio в Discord.",
   "Enable Applio integration with applio.org/models using flask": "Увімкнути інтеграцію Applio з applio.org/models за допомогою Flaskk",
@@ -213,19 +196,14 @@
   "Select the theme you want to use. (Requires restarting Applio)": "Виберіть тему, яку хочете використовувати. (Потрібно перезапустити Applio)",
   "Language": "Мова",
   "Select the language you want to use. (Requires restarting Applio)": "Виберіть мову, яку ви хочете використовувати. (Потрібно перезапустити Applio)",
-
   "Plugin Installer": "Інсталятор плагінів",
   "Drag your plugin.zip to install it": "Перетягніть plugin.zip, щоб встановити його",
-  
   "Version Checker": "Перевірка Оновлень",
   "Check which version of Applio is the latest to see if you need to update.": "Перевірте, яка версія Applio найновіша, щоб дізнатися, чи потрібно вам оновлюватися.",
   "Check for updates": "Перевірити наявність оновлень",
-  
   "Export Format": "Формат експорту",
   "Select the format to export the audio.": "Виберіть формат експорту аудіо.",
-  
   "Specify the number of GPUs you wish to utilize for training by entering them separated by hyphens (-).": "Вкажіть індекс графічних процесорів, які ви хочете використати для навчання, ввівши їх через дефіс (-). Наприклад: 0-1-3 ",
   "The GPU information will be displayed here.": "Тут вказана інформація про графічні процесори (у форматі [Індекс:Інформація]).",
   "Restart Applio": "Перезапустити Applio"
-  
 }

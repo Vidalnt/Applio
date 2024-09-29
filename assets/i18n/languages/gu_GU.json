@@ -155,7 +155,7 @@
   "Select the TTS voice to use for the conversion.": "રૂપાંતરણ માટે વાપરવા માટે TTS અવાજ પસંદ કરો.",
   "Text to Synthesize": "સંશ્લેષણ કરવા માટેનું લખાણ",
   "Enter the text to synthesize.": "સંશ્લેષણ કરવા માટે લખાણ દાખલ કરો.",
-  "Or you can upload a .txt file": "અથવા તમે .txt ફાઇલ અપલોડ કરી શકો છો",
+  "Upload a .txt file": "અથવા તમે .txt ફાઇલ અપલોડ કરી શકો છો",
   "Enter text to synthesize": "સંશ્લેષણ કરવા માટે લખાણ દાખલ કરો",
   "Output Path for TTS Audio": "TTS ઓડિયો માટે આઉટપુટ પાથ",
   "Output Path for RVC Audio": "RVC ઓડિયો માટે આઉટપુટ પાથ",

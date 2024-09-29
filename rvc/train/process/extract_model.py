@@ -55,6 +55,7 @@ def extract_model(
                 data = json.load(f)
                 dataset_lenght = data.get("total_dataset_duration", None)
                 embedder_model = data.get("embedder_model", None)
+                speakers_id = data.get("speakers_id", 1)
         else:
             dataset_lenght = None
 
@@ -103,6 +104,7 @@ def extract_model(
         opt["model_name"] = name
         opt["author"] = model_author
         opt["embedder_model"] = embedder_model
+        opt["speakers_id"] = speakers_id
 
         torch.save(opt, os.path.join(model_dir_path, pth_file))
 

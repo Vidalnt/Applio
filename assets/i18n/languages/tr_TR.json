@@ -3,7 +3,6 @@
   "This section contains some extra utilities that often may be in experimental phases.": "Bu bölümde, genellikle deneysel aşamalarda olabilecek bazı ekstra yardımcı programlar bulunur.",
   "Output Information": "Çıktı Bilgileri",
   "The output information will be displayed here.": "Çıktı bilgileri burada görüntülenecektir.",
-
   "Inference": "Arayüz",
   "Train": "Eğitim",
   "Extra": "Ekstra",
@@ -15,7 +14,6 @@
   "Download": "İndir",
   "Report a Bug": "Bir Hata Bildir",
   "Settings": "Ayarlar",
-
   "Preprocess": "İşlem Öncesi",
   "Model Name": "Model Adı",
   "Name of the new model.": "Yeni modelin adı.",
@@ -35,7 +33,6 @@
   "Model Architecture": "RVC Sürümü",
   "Version of the model architecture.": "Modelin RVC sürümü.",
   "Preprocess Dataset": "Veri Kümesini İşlem Öncesinden Geçir",
-
   "Embedder Model": "Gömme Modeli",
   "Model used for learning speaker embedding.": "Konuşmacı gömmelerini öğrenmek için kullanılan model.",
   "Extract": "Çıkar",
@@ -76,11 +73,9 @@
   "Overtraining Detector Settings": "Aşırı Eğitim Dedektörü Ayarları",
   "Overtraining Threshold": "Aşırı Eğitim Eşiği",
   "Set the maximum number of epochs you want your model to stop training if no improvement is detected.": "Herhangi bir iyileşme tespit edilmezse modelinizin eğitimini durdurmasını istediğiniz maksimum epoch sayısını ayarlayın.",
-
   "Start Training": "Eğitmeye Başla",
   "Stop Training & Restart Applio": "Eğitimi Durdur ve Applio'yu Yeniden Başlat",
   "Generate Index": "Dizin Oluştur",
-
   "Export Model": "Modeli Dışa Aktar",
   "The button 'Upload' is only for google colab: Uploads the exported files to the ApplioExported folder in your Google Drive.": "'Yükle' düğmesi yalnızca google colab içindir: Dışa aktarılan dosyaları Google Drive'ınızdaki ApplioExported klasörüne yükler.",
   "Exported Pth file": "Dışa Aktarılan Pth dosyası",
@@ -88,14 +83,12 @@
   "Select the pth file to be exported": "Dışa aktarılacak pth dosyasını seçin",
   "Select the index file to be exported": "Dışa aktarılacak dizin dosyasını seçin",
   "Upload": "Yükle",
-
   "Voice Model": "Ses Modeli",
   "Select the voice model to use for the conversion.": "Dönüştürme için kullanılacak ses modelini seçin.",
   "Index File": "Dizin Dosyası",
   "Select the index file to use for the conversion.": "Dönüştürme için kullanılacak dizin dosyasını seçin.",
   "Refresh": "Yenile",
   "Unload Voice": "Sesi Kaldır",
-
   "Single": "Tek",
   "Upload Audio": "Ses Yükle",
   "Select Audio": "Ses Seç",
@@ -125,10 +118,8 @@
   "Safeguard distinct consonants and breathing sounds to prevent electro-acoustic tearing and other artifacts. Pulling the parameter to its maximum value of 0.5 offers comprehensive protection. However, reducing this value might decrease the extent of protection while potentially mitigating the indexing effect.": "Elektro-akustik yırtılmayı ve diğer eserleri önlemek için farklı ünsüzleri ve solunum seslerini koruyun. Parametreyi maksimum değeri 0,5'e çekmek kapsamlı koruma sağlar. Ancak bu değeri azaltmak, koruma kapsamını azaltırken dizin oluşturma etkisini azaltabilir.",
   "Pitch extraction algorithm": "Perde çıkarma algoritması",
   "Pitch extraction algorithm to use for the audio conversion. The default algorithm is rmvpe, which is recommended for most cases.": "Ses dönüşümü için kullanılacak perde çıkarma algoritması. Varsayılan algoritma, çoğu durum için önerilen rmvpedir.",
-
   "Convert": "Dönüştür",
   "Export Audio": "Sesi Dışa Aktar",
-
   "Batch": "Toplu",
   "Input Folder": "Giriş Klasörü",
   "Select the folder containing the audios to convert.": "Dönüştürülecek sesleri içeren klasörü seçin.",
@@ -136,9 +127,7 @@
   "Output Folder": "Çıktı Klasörü",
   "Select the folder where the output audios will be saved.": "Çıktı seslerinin kaydedileceği klasörü seçin.",
   "Enter output path": "Çıktı yolunu girin",
-
   "Get information about the audio": "Ses hakkında bilgi al",
-
   "## Voice Blender": "## Ses Karıştırıcı",
   "Select two voice models, set your desired blend percentage, and blend them into an entirely new voice.": "İki ses modeli seçin, istediğiniz karışım yüzdesini ayarlayın ve bunları tamamen yeni bir sese karıştırın.",
   "Voice Blender": "Ses Karıştırıcı",
@@ -147,7 +136,6 @@
   "Blend Ratio": "Karışım Oranı",
   "Adjusting the position more towards one side or the other will make the model more similar to the first or second.": "Konumu bir yöne veya diğerine daha fazla ayarlayarak modeli birinci veya ikinciye daha benzer hale getireceksiniz.",
   "Fusion": "Birleştirme",
-
   "Path to Model": "Modele Giden Yol",
   "Enter path to model": "Modele giden yolu girin",
   "Model information to be placed": "Yerleştirilecek model bilgileri",
@@ -160,20 +148,16 @@
   "Model conversion": "Model dönüştürme",
   "Pth file": "Pth dosyası",
   "Output of the pth file": "Pth dosyasının çıktısı",
-
   "# How to Report an Issue on GitHub": "# GitHub'da Bir Sorunu Nasıl Bildirirsiniz",
   "1. Click on the 'Record Screen' button below to start recording the issue you are experiencing.": "1. Yaşadığınız sorunu kaydetmeye başlamak için aşağıdaki 'Ekran Kaydı' düğmesine tıklayın.",
   "2. Once you have finished recording the issue, click on the 'Stop Recording' button (the same button, but the label changes depending on whether you are actively recording or not).": "2. Sorunu kaydetmeyi tamamladığınızda, 'Kaydı Durdur' düğmesine tıklayın (aynı düğme, ancak aktif olarak kayıt yapıp yapmadığınıza bağlı olarak etiket değişir).",
   "3. Go to [GitHub Issues](https://github.com/IAHispano/Applio/issues) and click on the 'New Issue' button.": "3. [GitHub Sorunlarına](https://github.com/IAHispano/Applio/issues) gidin ve 'Yeni Sorun' düğmesine tıklayın.",
   "4. Complete the provided issue template, ensuring to include details as needed, and utilize the assets section to upload the recorded file from the previous step.": "4. Sağlanan sorun şablonunu tamamlayın, gerektiği gibi ayrıntıları eklediğinizden emin olun ve önceki adımdan kaydedilen dosyayı yüklemek için varlıklar bölümünü kullanın.",
-
   "Record Screen": "Ekranı Kaydet",
   "Record": "Kayıt Yap",
   "Stop Recording": "Kaydı Durdur",
-
   "Introduce the model .pth path": "Model .pth yolunu tanıtın",
   "See Model Information": "Model Bilgilerini Görün",
-
   "## Download Model": "## Model İndirin",
   "Model Link": "Model Bağlantısı",
   "Introduce the model link": "Model bağlantısını tanıtın",
@@ -184,31 +168,27 @@
   "Search": "Ara",
   "Introduce the model name to search.": "Aramak için model adını girin.",
   "We couldn't find models by that name.": "Bu isim'e sahip bir model bulunamadı.",
-
   "TTS Voices": "TTS Sesleri",
   "Select the TTS voice to use for the conversion.": "Dönüşüm için kullanılacak TTS sesini seçin.",
   "Text to Synthesize": "Sentezlemek İçin Metin",
   "Enter the text to synthesize.": "Sentezlemek için metni girin.",
-  "Or you can upload a .txt file": "Veya bir .txt dosyası yükleyebilirsiniz",
+  "Upload a .txt file": "Veya bir .txt dosyası yükleyebilirsiniz",
   "Enter text to synthesize": "Sentezlemek için metin girin",
   "Output Path for TTS Audio": "TTS Sesinin Çıktı Yolu",
   "Output Path for RVC Audio": "RVC Sesinin Çıktı Yolu",
-
   "Enable Applio integration with Discord presence": "Discord oynuyor Applio entegrasyonunu etkinleştirin",
   "It will activate the possibility of displaying the current Applio activity in Discord.": "Applio geçerli etkinliğini Discord'da görüntüleme olasılığını etkinleştirir.",
   "Enable Applio integration with applio.org/models using flask": "Flask kullanarak applio.org/models ile Applio entegrasyonunu etkinleştirin",
   "It will activate the possibility of downloading models with a click from the website.": "Web sitesinden bir tıklama ile modellerin indirilmesi olasılığını etkinleştirir.",
   "Enable fake GPU": "Sahte GPU'yu Etkinleştir",
   "Training is currently unsupported due to the absence of a GPU. To activate the training tab, navigate to the settings tab and enable the 'Fake GPU' option.": "GPU olmadığı için eğitim şu anda desteklenmiyor. Eğitim sekmesini etkinleştirmek için ayarlar sekmesine gidin ve 'Sahte GPU' seçeneğini etkinleştirin.",
-  "Activates the train tab. However, please note that this device lacks GPU capabilities, hence training is not supported. This option is only for testing purposes. (This option will restart Applio)": "Eğitim sekmesini etkinleştirir. Ancak, bu cihazda GPU yetenekleri olmadığından, eğitim desteklenmez. Bu seçenek yalnızca test amaçlıdır. (Bu seçenek Applio'yu yeniden başlatacaktır)", 
+  "Activates the train tab. However, please note that this device lacks GPU capabilities, hence training is not supported. This option is only for testing purposes. (This option will restart Applio)": "Eğitim sekmesini etkinleştirir. Ancak, bu cihazda GPU yetenekleri olmadığından, eğitim desteklenmez. Bu seçenek yalnızca test amaçlıdır. (Bu seçenek Applio'yu yeniden başlatacaktır)",
   "Theme": "Tema",
   "Select the theme you want to use. (Requires restarting Applio)": "Kullanmak istediğiniz temayı seçin. (Applio'yu yeniden başlatmayı gerektirir)",
   "Language": "Dil",
   "Select the language you want to use. (Requires restarting Applio)": "Kullanmak istediğiniz dili seçin. (Applio'yu yeniden başlatmayı gerektirir)",
-
   "Plugin Installer": "Plugin Yükleyici",
   "Drag your plugin.zip to install it": "Yüklemek için plugin.zip'inizi sürükleyin",
-
   "Version Checker": "Sürüm Denetleyicisi",
   "Check which version of Applio is the latest to see if you need to update.": "Güncellemeniz gerekip gerekmediğini görmek için Applio'nun hangi sürümünün en son olduğunu kontrol edin.",
   "Check for updates": "Güncellemeleri kontrol et"

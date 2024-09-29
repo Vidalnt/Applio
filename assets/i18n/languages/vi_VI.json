@@ -155,7 +155,7 @@
   "Select the TTS voice to use for the conversion.": "Chọn giọng nói TTS để sử dụng cho quá trình chuyển đổi.",
   "Text to Synthesize": "Văn bản để tổng hợp",
   "Enter the text to synthesize.": "Nhập văn bản để tổng hợp.",
-  "Or you can upload a .txt file": "Hoặc bạn có thể tải lên tệp .txt",
+  "Upload a .txt file": "Hoặc bạn có thể tải lên tệp .txt",
   "Enter text to synthesize": "Nhập văn bản để tổng hợp",
   "Output Path for TTS Audio": "Đường dẫn đầu ra cho âm thanh TTS",
   "Output Path for RVC Audio": "Đường dẫn đầu ra cho âm thanh RVC",

@@ -155,7 +155,7 @@
   "Select the TTS voice to use for the conversion.": "Selecteer de TTS-stem die u voor de conversie wilt gebruiken.",
   "Text to Synthesize": "Tekst om te synthetiseren",
   "Enter the text to synthesize.": "Voer de tekst in die u wilt synthetiseren.",
-  "Or you can upload a .txt file": "Of u kunt een .txt bestand uploaden",
+  "Upload a .txt file": "Of u kunt een .txt bestand uploaden",
   "Enter text to synthesize": "Voer tekst in om te synthetiseren",
   "Output Path for TTS Audio": "Uitvoerpad voor TTS-audio",
   "Output Path for RVC Audio": "Uitvoerpad voor RVC-audio",

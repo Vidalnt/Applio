@@ -139,12 +139,6 @@ class STFT:
         y = torch.nn.functional.pad(y.unsqueeze(1), (pad_left, pad_right), mode=mode)
         y = y.squeeze(1)
 
-        # Zluda, fall-back to CPU for FFTs since HIP SDK has no cuFFT alternative
-        source_device = y.device
-        if y.device.type == "cuda" and torch.cuda.get_device_name().endswith("[ZLUDA]"):
-            y = y.to("cpu")
-            hann_window[keyshift_key] = hann_window[keyshift_key].to("cpu")
-
         spec = torch.stft(
             y,
             n_fft_new,
@@ -156,7 +150,7 @@ class STFT:
             normalized=False,
             onesided=True,
             return_complex=True,
-        ).to(source_device)
+        )
         spec = torch.sqrt(spec.real.pow(2) + spec.imag.pow(2) + (1e-9))
 
         # Handle keyshift and mel conversion

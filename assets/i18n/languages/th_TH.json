@@ -155,7 +155,7 @@
   "Select the TTS voice to use for the conversion.": "เลือกเสียง TTS ที่จะใช้สําหรับการแปลง",
   "Text to Synthesize": "ข้อความที่จะสังเคราะห์",
   "Enter the text to synthesize.": "ป้อนข้อความที่จะสังเคราะห์",
-  "Or you can upload a .txt file": "หรือคุณสามารถอัปโหลดไฟล์ .txt",
+  "Upload a .txt file": "หรือคุณสามารถอัปโหลดไฟล์ .txt",
   "Enter text to synthesize": "ป้อนข้อความที่จะสังเคราะห์",
   "Output Path for TTS Audio": "เส้นทางเอาต์พุตสําหรับเสียง TTS",
   "Output Path for RVC Audio": "เส้นทางเอาต์พุตสําหรับเสียง RVC",

@@ -155,7 +155,7 @@
   "Select the TTS voice to use for the conversion.": "حدد صوت TTS لاستخدامه في التحويل.",
   "Text to Synthesize": "النص المراد توليفه",
   "Enter the text to synthesize.": "أدخل النص المراد توليفه.",
-  "Or you can upload a .txt file": "أو يمكنك تحميل ملف .txt",
+  "Upload a .txt file": "أو يمكنك تحميل ملف .txt",
   "Enter text to synthesize": "أدخل نصا لتوليفه",
   "Output Path for TTS Audio": "مسار الإخراج لصوت TTS",
   "Output Path for RVC Audio": "مسار الإخراج لصوت RVC",

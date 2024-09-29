@@ -3,7 +3,6 @@
   "This section contains some extra utilities that often may be in experimental phases.": "Cette section contient quelques utilitaires supplémentaires qui peuvent souvent être en phase expérimentale.",
   "Output Information": "Informations de sortie",
   "The output information will be displayed here.": "Les informations de sortie seront affichées ici.",
-  
   "Inference": "Inférence",
   "Train": "Train",
   "Extra": "Supplémentaire",
@@ -15,7 +14,6 @@
   "Download": "Télécharger",
   "Report a Bug": "Signaler un bogue",
   "Settings": "Paramètres",
-  
   "Preprocess": "Pré-traitement",
   "Model Name": "Nom du modèle",
   "Name of the new model.": "Nom du nouveau modèle.",
@@ -40,7 +38,6 @@
   "Denotes the duration it takes for the system to transition to a significant pitch change. Smaller hop lengths require more time for inference but tend to yield higher pitch accuracy.": "Indique le temps qu’il faut au système pour passer à un changement de hauteur significatif. Les longueurs de saut plus petites nécessitent plus de temps pour l’inférence, mais ont tendance à donner une plus grande précision de hauteur.",
   "Model used for learning speaker embedding.": "Modèle utilisé pour apprendre l’intégration des haut-parleurs.",
   "Batch Size": "Taille du lot",
-  
   "Embedder Model": "Embedder Model",
   "It's advisable to align it with the available VRAM of your GPU. A setting of 4 offers improved accuracy but slower processing, while 8 provides faster and standard results.": "Il est conseillé de l’aligner sur la VRAM disponible de votre GPU. Un réglage de 4 offre une précision améliorée mais un traitement plus lent, tandis que 8 fournit des résultats plus rapides et standard.",
   "Save Every Epoch": "Sauvez toutes les époques",
@@ -78,11 +75,9 @@
   "Set the maximum number of epochs you want your model to stop training if no improvement is detected.": "Définissez le nombre maximal d’époques pendant lesquelles vous souhaitez que votre modèle arrête l’entraînement si aucune amélioration n’est détectée.",
   "Sync Graph": "Graphique de synchronisation",
   "Synchronize the graph of the tensorbaord. Only enable this setting if you are training a new model.": "Synchronisez le graphique du tensorbaord. Activez ce paramètre uniquement si vous entraînez un nouveau modèle.",
-
   "Start Training": "Commencer l’entraînement",
   "Stop Training & Restart Applio": "Arrêter l’entraînement et redémarrer Applio",
   "Generate Index": "Générer un index",
-  
   "Export Model": "Modèle d’exportation",
   "The button 'Upload' is only for google colab: Uploads the exported files to the ApplioExported folder in your Google Drive.": "Le bouton « Upload » est uniquement destiné à Google Colab : upload les fichiers exportés dans le dossier ApplioExported de votre Google Drive.",
   "Exported Pth file": "Fichier Pth exporté",
@@ -90,14 +85,12 @@
   "Select the pth file to be exported": "Sélectionnez le fichier pth à exporter",
   "Select the index file to be exported": "Sélectionnez le fichier d’index à exporter",
   "Upload": "Envoyer",
-
   "Voice Model": "Modèle vocal",
   "Select the voice model to use for the conversion.": "Sélectionnez le modèle vocal à utiliser pour la conversion.",
   "Index File": "Fichier d’index",
   "Select the index file to use for the conversion.": "Sélectionnez le fichier d’index à utiliser pour la conversion.",
   "Refresh": "Rafraîchir",
   "Unload Voice": "Décharger la voix",
-  
   "Single": "Seul",
   "Upload Audio": "Envoyer l’audio",
   "Select Audio": "Sélectionnez Audio (Audio)",
@@ -129,10 +122,8 @@
   "Safeguard distinct consonants and breathing sounds to prevent electro-acoustic tearing and other artifacts. Pulling the parameter to its maximum value of 0.5 offers comprehensive protection. However, reducing this value might decrease the extent of protection while potentially mitigating the indexing effect.": "Protégez les consonnes distinctes et les sons respiratoires pour éviter les déchirures électroacoustiques et autres artefacts. L’extraction du paramètre à sa valeur maximale de 0,5 offre une protection complète. Toutefois, la réduction de cette valeur peut réduire l’étendue de la protection tout en atténuant potentiellement l’effet d’indexation.",
   "Pitch extraction algorithm": "Algorithme d’extraction de hauteur",
   "Pitch extraction algorithm to use for the audio conversion. The default algorithm is rmvpe, which is recommended for most cases.": "Algorithme d’extraction de hauteur à utiliser pour la conversion audio. L’algorithme par défaut est rmvpe, qui est recommandé dans la plupart des cas.",
-  
   "Convert": "Convertir",
   "Export Audio": "Exporter l’audio",
-
   "Batch": "Lot",
   "Input Folder": "Dossier d’entrée",
   "Select the folder containing the audios to convert.": "Sélectionnez le dossier contenant les audios à convertir.",
@@ -140,9 +131,7 @@
   "Output Folder": "Dossier de sortie",
   "Select the folder where the output audios will be saved.": "Sélectionnez le dossier dans lequel les audios de sortie seront enregistrés.",
   "Enter output path": "Entrez le chemin de sortie",
-  
   "Get information about the audio": "Obtenir des informations sur l’audio",
-  
   "## Voice Blender": "## Mélangeur de voix",
   "Select two voice models, set your desired blend percentage, and blend them into an entirely new voice.": "Sélectionnez deux modèles de voix, définissez le pourcentage de fusion souhaité et mélangez-les en une toute nouvelle voix.",
   "Voice Blender": "Mélangeur de voix",
@@ -151,7 +140,6 @@
   "Blend Ratio": "Rapport de mélange",
   "Adjusting the position more towards one side or the other will make the model more similar to the first or second.": "En ajustant la position d’un côté ou de l’autre, le modèle sera plus similaire au premier ou au second.",
   "Fusion": "Fusion",
-  
   "Path to Model": "Chemin d’accès au modèle",
   "Enter path to model": "Entrez le chemin d’accès au modèle",
   "Model information to be placed": "Informations sur le modèle à placer",
@@ -164,23 +152,18 @@
   "Model conversion": "Conversion de modèle",
   "Pth file": "Fichier Pth",
   "Output of the pth file": "Sortie du fichier pth",
-
   "Extract F0 Curve": "Extraire la courbe F0",
-  "The f0 curve represents the variations in the base frequency of a voice over time, showing how pitch rises and falls.": "La courbe f0 représente les variations de la fréquence de base d’une voix au fil du temps, montrant comment la hauteur monte et descend.",  
-  
+  "The f0 curve represents the variations in the base frequency of a voice over time, showing how pitch rises and falls.": "La courbe f0 représente les variations de la fréquence de base d’une voix au fil du temps, montrant comment la hauteur monte et descend.",
   "# How to Report an Issue on GitHub": "# Comment signaler un problème sur GitHub",
   "1. Click on the 'Record Screen' button below to start recording the issue you are experiencing.": "1. Cliquez sur le bouton « Enregistrer l’écran » ci-dessous pour commencer à enregistrer le problème que vous rencontrez.",
   "2. Once you have finished recording the issue, click on the 'Stop Recording' button (the same button, but the label changes depending on whether you are actively recording or not).": "2. Une fois que vous avez terminé d’enregistrer le numéro, cliquez sur le bouton « Arrêter l’enregistrement » (le même bouton, mais l’étiquette change selon que vous enregistrez activement ou non).",
   "3. Go to [GitHub Issues](https://github.com/IAHispano/Applio/issues) and click on the 'New Issue' button.": "3. Allez dans [GitHub Issues](https://github.com/IAHispano/Applio/issues) et cliquez sur le bouton « New issue ».",
   "4. Complete the provided issue template, ensuring to include details as needed, and utilize the assets section to upload the recorded file from the previous step.": "4. Complétez le modèle de problème fourni, en veillant à inclure les détails nécessaires, et utilisez la section des ressources pour envoyer le fichier enregistré de l’étape précédente.",
-  
   "Record Screen": "Écran d’enregistrement",
   "Record": "Enregistrer",
   "Stop Recording": "Arrêter l’enregistrement",
-
   "Introduce the model .pth path": "Présentation du chemin d’accès .pth du modèle",
   "See Model Information": "Voir les informations sur le modèle",
-
   "## Download Model": "## Télécharger le modèle",
   "Model Link": "Lien vers le modèle",
   "Introduce the model link": "Introduire le lien du modèle",
@@ -194,18 +177,16 @@
   "## Download Pretrained Models": "## Télécharger des modèles pré-entraînés",
   "Select the pretrained model you want to download.": "Sélectionnez le modèle pré-entraîné que vous souhaitez télécharger.",
   "And select the sampling rate": "Et sélectionnez le taux d’échantillonnage",
-  
   "TTS Voices": "Voix TTS",
   "TTS Speed": "Vitesse TTS",
   "Increase or decrease TTS speed.": "Augmenter ou diminuer la vitesse du TTS.",
   "Select the TTS voice to use for the conversion.": "Sélectionnez la voix TTS à utiliser pour la conversion.",
   "Text to Synthesize": "Texte à synthétiser",
   "Enter the text to synthesize.": "Saisissez le texte à synthétiser.",
-  "Or you can upload a .txt file": "Vous pouvez également utiliser un fichier .txt",
+  "Upload a .txt file": "Vous pouvez également utiliser un fichier .txt",
   "Enter text to synthesize": "Saisir le texte à synthétiser",
   "Output Path for TTS Audio": "Chemin de sortie pour l’audio TTS",
   "Output Path for RVC Audio": "Chemin de sortie pour l’audio RVC",
-
   "Enable Applio integration with Discord presence": "Activer l’intégration d’Applio avec la présence de Discord",
   "It will activate the possibility of displaying the current Applio activity in Discord.": "Il activera la possibilité d’afficher l’activité actuelle d’Applio dans Discord.",
   "Enable Applio integration with applio.org/models using flask": "Activer l’intégration d’Applio avec applio.org/models à l’aide de flask",
@@ -220,10 +201,8 @@
   "Update precision": "Mettre à jour la précision",
   "Language": "Langue",
   "Select the language you want to use. (Requires restarting Applio)": "Sélectionnez la langue que vous souhaitez utiliser. (Nécessite le redémarrage d’Applio)",
-  
   "Plugin Installer": "Installateur de plugin",
   "Drag your plugin.zip to install it": "Faites glisser votre plugin.zip pour l’installer",
-  
   "Version Checker": "Vérificateur de version",
   "Check which version of Applio is the latest to see if you need to update.": "Vérifiez quelle version d’Applio est la plus récente pour voir si vous devez effectuer une mise à jour.",
   "Check for updates": "Vérifier les mises à jour"

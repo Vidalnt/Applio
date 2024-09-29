@@ -155,7 +155,7 @@
   "Select the TTS voice to use for the conversion.": "Pilih suara TTS untuk digunakan bagi penukaran.",
   "Text to Synthesize": "Teks untuk Mensintesis",
   "Enter the text to synthesize.": "Masukkan teks untuk mensintesiskan.",
-  "Or you can upload a .txt file": "Atau anda boleh memuat naik fail .txt",
+  "Upload a .txt file": "Atau anda boleh memuat naik fail .txt",
   "Enter text to synthesize": "Masukkan teks untuk mensintesis saiz",
   "Output Path for TTS Audio": "Laluan output untuk TTS Audio",
   "Output Path for RVC Audio": "Laluan Output untuk Audio RVC",

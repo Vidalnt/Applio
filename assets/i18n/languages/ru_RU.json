@@ -155,7 +155,7 @@
   "Select the TTS voice to use for the conversion.": "Выберите голос TTS, который будет использоваться для преобразования.",
   "Text to Synthesize": "Текст для синтеза",
   "Enter the text to synthesize.": "Введите текст для синтеза.",
-  "Or you can upload a .txt file": "Или вы можете загрузить .txt файл",
+  "Upload a .txt file": "Или вы можете загрузить .txt файл",
   "Enter text to synthesize": "Введите текст для синтеза",
   "Output Path for TTS Audio": "Выходной путь для TTS-аудио",
   "Output Path for RVC Audio": "Выходной путь для RVC-аудио",

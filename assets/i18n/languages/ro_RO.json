@@ -155,7 +155,7 @@
   "Select the TTS voice to use for the conversion.": "Selectați vocea TTS de utilizat pentru conversie.",
   "Text to Synthesize": "Text pentru sintetizare",
   "Enter the text to synthesize.": "Introduceți textul pentru a sintetiza.",
-  "Or you can upload a .txt file": "Sau puteți încărca un fișier .txt",
+  "Upload a .txt file": "Sau puteți încărca un fișier .txt",
   "Enter text to synthesize": "Introduceți text pentru sintetizare",
   "Output Path for TTS Audio": "Cale de ieșire pentru TTS Audio",
   "Output Path for RVC Audio": "Cale de ieșire pentru RVC Audio",

@@ -357,7 +357,7 @@ class Pipeline:
                 hop_length,
             )
 
-        if f0_autotune == "True":
+        if f0_autotune is True:
             f0 = Autotune.autotune_f0(self, f0)
 
         f0 *= pow(2, pitch / 12)

@@ -33,7 +33,6 @@
     "Model Architecture": "RVC பதிப்பு",
     "Version of the model architecture.": "மாதிரி RVC பதிப்பு.",
     "Preprocess Dataset": "முன்பாகவும் தரவுத்தொகுதி",
-
     "Embedder Model": "உள்ளீடு மாதிரி",
     "Model used for learning speaker embedding.": "பேச்சாளர் உள்ளீட்டை கற்க பயன்படுத்தப்படும் மாதிரி.",
     "Extract": "எக்ஸ்ட்ராக்ட்",
@@ -74,11 +73,9 @@
     "Overtraining Detector Settings": "அதிக பயிற்சிப்படுத்தும் அறிவுப்பால் அமைப்புகள்",
     "Overtraining Threshold": "அதிக பயிற்சிப்படுத்தும் அறிவுப்பால் அதிகம்",
     "Set the maximum number of epochs you want your model to stop training if no improvement is detected.": "அதிகமாக பயிற்சிப்படுத்தும் தரவு அறியப்படாதால் உங்கள் மாதிரியின் பயிற்சிப்படுத்தும் மொத்த எண்ணிக்கையை அமைக்கவும்.",
-
     "Start Training": "பயிற்சி ஆரம்பிக்கவும்",
     "Stop Training & Restart Applio": "பயிற்சி நிறுத்து & புதுப்பிக்க Applio",
     "Generate Index": "சுருக்கம் உருவாக்கு",
-
     "Export Model": "ஏற்றுமதி மாதிரி",
     "The button 'Upload' is only for google colab: Uploads the exported files to the ApplioExported folder in your Google Drive.": "'பதிவேற்று' பொத்தான்கள் உள்ளீட்டிற்கு மட்டுமே கூகுள் கோலாப் சேமிப்பகத்திற்கு கடைசியாக கூகுள் டிரைவில் உங்கள் ApplioExported கோப்புக்கு ஏற்றுமதிக்கும்.",
     "Exported Pth file": "ஏற்றுமதிக்கப்பட்ட Pth கோப்பு",
@@ -86,7 +83,6 @@
     "Select the pth file to be exported": "ஏற்றுமதிக்க வேண்டிய pth கோப்பைத் தேர்ந்தெடுக்கவும்",
     "Select the index file to be exported": "ஏற்றுமதிக்க வேண்டிய சுட்டி கோப்பைத் தேர்ந்தெடுக்கவும்",
     "Upload": "பதிவேற்று",
-
     "Voice Model": "குரல் மாதிரி",
     "Select the voice model to use for the conversion.": "மாற்றத்திற்கு பயன்படுத்த விரும்பும் குரல் மாதிரியை தேர்ந்தெடுக்கவும்.",
     "Index File": "சுருக்க கோப்பு",
@@ -122,10 +118,8 @@
     "Safeguard distinct consonants and breathing sounds to prevent electro-acoustic tearing and other artifacts. Pulling the parameter to its maximum value of 0.5 offers comprehensive protection. However, reducing this value might decrease the extent of protection while potentially mitigating the indexing effect.": "எலக்ட்ரோ-ஒலி கொழுகு மற்றும் பிற கலப்புகளை தடுக்குவதற்கு விரிவான ஸ்வரக்களுக்கு மற்றும் சுவாசத் தானங்களுக்கு பாதுகாக்க. இந்த அளவுக்கு அதிகமாக 0.5 க்கு அழைத்துக் கொள்வது பொருத்தமான பாதுகாப்பை வழங்குகின்றது. ஆனால், இந்த மதிப்பை குறைந்ததாக்கின்றார் என்றால், பாதுகாப்புக்குரிய நிலை குறைந்துவிடப்படலாம் மற்றும் அதுவே இந்தக் குறோக்குனை பரிந்துரிக்கும் என்று எச்சரிக்கை தரகின்றது.",
     "Pitch extraction algorithm": "பிச் எக்ஸ்டிரக்ஷன் அளவுத் தொகுப்பு",
     "Pitch extraction algorithm to use for the audio conversion. The default algorithm is rmvpe, which is recommended for most cases.": "ஒலி மாற்றத்திற்கு பயன்படுத்த வேண்டிய பிச் எக்ஸ்டிரக்ஷன் அளவுத் தொகுப்பு. இயல்பான அளவுத் தொகுப்பு rmvpe ஆகும், இது அதிகமாக பரிந்துரிக்கப்படுகின்றது.",
-    
     "Convert": "மாற்று",
     "Export Audio": "ஒலியை ஏற்றுமதி செய்",
-
     "Batch": "பேட்ச்",
     "Input Folder": "உள்ளிடும் கோப்பு",
     "Select the folder containing the audios to convert.": "மாற்ற ஒலிகளைக் கொண்ட கோப்புகளைக் கொண்ட கோப்புக்கு தேர்ந்தெடு.",
@@ -133,9 +127,7 @@
     "Output Folder": "வெற்றி கோப்பு",
     "Select the folder where the output audios will be saved.": "வெற்றிகளைச் சேமிக்கப்படும் கோப்புக்கு தேர்ந்தெடு.",
     "Enter output path": "வெற்றியின் பாதையை உள்ளிடுக",
-    
     "Get information about the audio": "ஒலியை பற்றிய தகவல் பெறுக",
-
     "## Voice Blender": "## குரல் பிளெண்டர்",
     "Select two voice models, set your desired blend percentage, and blend them into an entirely new voice.": "இரண்டு குரல் மாதிரிகளைத் தேர்வு செய்து, விரும்பிய குரல் சதவீதம் அமைக்கவும், அவைகளை முழுமையாக ஒரு புதிய குரலாக பிளெண்டுகின்றன.",
     "Voice Blender": "குரல் பிளெண்டர்",
@@ -176,12 +168,11 @@
     "Search": "தேடு",
     "Introduce the model name to search.": "தேடுவதற்கு மாதிரிப் பெயரை அறிமுகப்படுத்து.",
     "We couldn't find models by that name.": "அந்த பெயரில் மாதிரிகளைக் கண்டுபிடிக்க முடியவில்லை.",
-    
     "TTS Voices": "TTS குரல்கள்",
     "Select the TTS voice to use for the conversion.": "மாற்றத்திற்கு பயன்படுத்த உள்ள TTS குரலை தேர்ந்தெடுக்கவும்.",
     "Text to Synthesize": "சிந்தனை செய்ய உள்ள உரை",
     "Enter the text to synthesize.": "சிந்தனை செய்ய உள்ள உரையை உள்ளிடுக.",
-    "Or you can upload a .txt file": "அல்லது .txt கோப்பை பதிவேற்றலாம்",
+    "Upload a .txt file": "அல்லது .txt கோப்பை பதிவேற்றலாம்",
     "Enter text to synthesize": "சிந்தனை செய்ய உள்ள உரையை உள்ளிடுக",
     "Output Path for TTS Audio": "TTS குரலுக்கான வெளியேற்ற பாதை",
     "Output Path for RVC Audio": "RVC குரலுக்கான வெளியேற்ற பாதை",

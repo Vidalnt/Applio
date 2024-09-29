@@ -3,7 +3,6 @@
   "This section contains some extra utilities that often may be in experimental phases.": "इस खंड में कुछ अतिरिक्त उपयोगिताएँ होती हैं जो अक्सर प्रायोगिक चरणों में हो सकती हैं।",
   "Output Information": "आउटपुट जानकारी",
   "The output information will be displayed here.": "आउटपुट जानकारी यहाँ प्रदर्शित की जाएगी।",
-
   "Inference": "निष्कर्ष",
   "Train": "ट्रेन",
   "Extra": "अतिरिक्त",
@@ -15,7 +14,6 @@
   "Download": "डाउनलोड करें",
   "Report a Bug": "एक बग की रिपोर्ट करें",
   "Settings": "सेटिंग्स",
-
   "Preprocess": "पूर्व-प्रसंस्करण",
   "Model Name": "मॉडल का नाम",
   "Name of the new model.": "नए मॉडल का नाम।",
@@ -35,7 +33,6 @@
   "Model Architecture": "RVC वर्शन",
   "Version of the model architecture.": "मॉडल का RVC वर्शन।",
   "Preprocess Dataset": "डेटासेट का पूर्व-प्रसंस्करण करें",
-
   "Embedder Model": "एम्बेडर मॉडल",
   "Model used for learning speaker embedding.": "स्पीकर एम्बेडिंग सीखने के लिए उपयोग किया जाने वाला मॉडल।",
   "Extract": "एक्सट्रैक्ट",
@@ -76,11 +73,9 @@
   "Overtraining Detector Settings": "ओवरट्रेनिंग डिटेक्टर सेटिंग्स",
   "Overtraining Threshold": "ओवरट्रेनिंग थ्रेशोल्ड",
   "Set the maximum number of epochs you want your model to stop training if no improvement is detected.": "यदि कोई सुधार नहीं पाया जाता है, तो आप अपने मॉडल को प्रशिक्षण बंद करने के लिए अधिकतम युगों की संख्या निर्धारित करें।",
-
   "Start Training": "प्रशिक्षण शुरू करें",
   "Stop Training & Restart Applio": "प्रशिक्षण रोकें और Applio को पुनः आरंभ करें",
   "Generate Index": "इंडेक्स बनाएँ",
-
   "Export Model": "मॉडल निर्यात करें",
   "The button 'Upload' is only for google colab: Uploads the exported files to the ApplioExported folder in your Google Drive.": "'अपलोड' बटन केवल गूगल कोलाब के लिए है: निर्यात की गई फ़ाइलों को आपके Google ड्राइव में ApplioExported फ़ोल्डर में अपलोड करता है।",
   "Exported Pth file": "निर्यात की गई Pth फ़ाइल",
@@ -88,14 +83,12 @@
   "Select the pth file to be exported": "निर्यात की जाने वाली pth फ़ाइल का चयन करें",
   "Select the index file to be exported": "निर्यात की जाने वाली इंडेक्स फ़ाइल का चयन करें",
   "Upload": "अपलोड करें",
-
   "Voice Model": "आवाज़ का मॉडल",
   "Select the voice model to use for the conversion.": "रूपांतरण के लिए उपयोग करने के लिए आवाज मॉडल का चयन करें।",
   "Index File": "इंडेक्स फ़ाइल",
   "Select the index file to use for the conversion.": "रूपांतरण के लिए उपयोग करने के लिए इंडेक्स फ़ाइल का चयन करें।",
   "Refresh": "ताज़ा करें",
   "Unload Voice": "आवाज़ अनलोड करें",
-
   "Single": "सिंगल",
   "Upload Audio": "ऑडियो अपलोड करें",
   "Select Audio": "ऑडियो चुनें",
@@ -125,10 +118,8 @@
   "Safeguard distinct consonants and breathing sounds to prevent electro-acoustic tearing and other artifacts. Pulling the parameter to its maximum value of 0.5 offers comprehensive protection. However, reducing this value might decrease the extent of protection while potentially mitigating the indexing effect.": "इलेक्ट्रो-ध्वनिक फाड़ और अन्य कलाकृतियों को रोकने के लिए अलग-अलग व्यंजन और साँस लेने की आवाज़ को सुरक्षित रखें। पैरामीटर को उसके अधिकतम मान 0.5 तक खींचना व्यापक सुरक्षा प्रदान करता है। हालाँकि, इस मान को कम करने से सुरक्षा की सीमा कम हो सकती है जबकि संभावित रूप से अनुक्रमण प्रभाव कम हो सकता है।",
   "Pitch extraction algorithm": "पिच निष्कर्षण एल्गोरिदम",
   "Pitch extraction algorithm to use for the audio conversion. The default algorithm is rmvpe, which is recommended for most cases.": "ऑडियो रूपांतरण के लिए उपयोग करने के लिए पिच निष्कर्षण एल्गोरिदम। डिफ़ॉल्ट एल्गोरिथम rmvpe है, जो अधिकांश मामलों के लिए अनुशंसित है।",
-
   "Convert": "रूपांतरित करें",
   "Export Audio": "ऑडियो एक्सपोर्ट करें",
-
   "Batch": "बैच",
   "Input Folder": "इनपुट फ़ोल्डर",
   "Select the folder containing the audios to convert.": "रूपांतरित करने के लिए ऑडियो वाली फ़ोल्डर का चयन करें।",
@@ -136,9 +127,7 @@
   "Output Folder": "आउटपुट फ़ोल्डर",
   "Select the folder where the output audios will be saved.": "फ़ोल्डर का चयन करें जहाँ आउटपुट ऑडियो को सेव किया जाएगा।",
   "Enter output path": "आउटपुट पथ दर्ज करें",
-
   "Get information about the audio": "ऑडियो के बारे में जानकारी प्राप्त करें",
-
   "## Voice Blender": "## Voice Blender",
   "Select two voice models, set your desired blend percentage, and blend them into an entirely new voice.": "दो आवाज़ के मॉडल का चयन करें, अपना वांछित मिश्रित प्रतिशत सेट करें, और उन्हें एक पूर्ण रूप से नई आवाज़ में सम्मिश्रित करें।",
   "Voice Blender": "Voice Blender",
@@ -147,7 +136,6 @@
   "Blend Ratio": "मिश्रित अनुपात",
   "Adjusting the position more towards one side or the other will make the model more similar to the first or second.": "स्थिति को एक तरफ या दूसरी तरफ समायोजित करने से माॅडल पहले या दूसरे के समान हो जाएगा।",
   "Fusion": "सम्मिश्रण",
-
   "Path to Model": "मॉडल का पथ",
   "Enter path to model": "मॉडल का पथ दर्ज करें",
   "Model information to be placed": "मॉडल की जानकारी स्थान की जाएगी",
@@ -160,20 +148,16 @@
   "Model conversion": "मॉडल रूपांतरण",
   "Pth file": "Pth फ़ाइल",
   "Output of the pth file": "Pth फ़ाइल का आउटपुट",
-
   "# How to Report an Issue on GitHub": "# GitHub पर किसी समस्या की रिपोर्ट कैसे करें",
   "1. Click on the 'Record Screen' button below to start recording the issue you are experiencing.": "1.आपके द्वारा अनुभव की जा रही समस्या को रिकॉर्ड करना शुरू करने के लिए नीचे दिए गए 'रिकॉर्ड स्क्रीन' बटन पर क्लिक करें।",
   "2. Once you have finished recording the issue, click on the 'Stop Recording' button (the same button, but the label changes depending on whether you are actively recording or not).": "2. एक बार जब आप समस्या की रिकॉर्डिंग समाप्त कर लें, तो 'स्टॉप रिकॉर्डिंग' बटन पर क्लिक करें (वही बटन, लेकिन लेबल इस पर निर्भर करता है कि आप सक्रिय रूप से रिकॉर्डिंग कर रहे हैं या नहीं)।",
   "3. Go to [GitHub Issues](https://github.com/IAHispano/Applio/issues) and click on the 'New Issue' button.": "3. [GitHub Issues](https://github.com/IAHispano/Applio/issues) पर जाएँ और 'New Issue' बटन पर क्लिक करें।",
   "4. Complete the provided issue template, ensuring to include details as needed, and utilize the assets section to upload the recorded file from the previous step.": "4. दिए गए समस्या टेम्पलेट को पूरा करें, आवश्यकतानुसार विवरण शामिल करना सुनिश्चित करें, और पिछले चरण से रिकॉर्ड की गई फ़ाइल को अपलोड करने के लिए एसेट सेक्शन का उपयोग करें।",
-
   "Record Screen": "स्क्रीन रिकॉर्ड करें",
   "Record": "रिकॉर्ड करें",
   "Stop Recording": "रिकॉर्डिंग बंद करें",
-
   "Introduce the model .pth path": "मॉडल .pth पथ का परिचय दें",
   "See Model Information": "मॉडल की जानकारी देखें",
-
   "## Download Model": "## मॉडल डाउनलोड करें",
   "Model Link": "मॉडल लिंक",
   "Introduce the model link": "मॉडल लिंक का परिचय दें",
@@ -184,16 +168,14 @@
   "Search": "खोज",
   "Introduce the model name to search.": "खोज करने के लिए मॉडल का नाम बताएं।",
   "We couldn't find models by that name.": "हमें उस नाम से मॉडल नहीं मिला।",
-
   "TTS Voices": "TTS Voices",
   "Select the TTS voice to use for the conversion.": "रूपांतरण के लिए उपयोग करने के लिए TTS वॉयस का चयन करें।",
   "Text to Synthesize": "Text to Synthesize",
   "Enter the text to synthesize.": "संश्लेषित करने के लिए पाठ दर्ज करें।",
-  "Or you can upload a .txt file": "या आप एक .txt फ़ाइल अपलोड कर सकते हैं",
+  "Upload a .txt file": "या आप एक .txt फ़ाइल अपलोड कर सकते हैं",
   "Enter text to synthesize": "संश्लेषित करने के लिए पाठ दर्ज करें",
   "Output Path for TTS Audio": "TTS ऑडियो के लिए आउटपुट पथ",
   "Output Path for RVC Audio": "RVC ऑडियो के लिए आउटपुट पथ",
-
   "Enable Applio integration with Discord presence": "डिस्कॉर्ड उपस्थिति के साथ Applio एकीकरण को सक्षम करें",
   "It will activate the possibility of displaying the current Applio activity in Discord.": "यह डिस्कॉर्ड में वर्तमान Applio गतिविधि प्रदर्शित करने की संभावना को सक्रिय करेगा।",
   "Enable Applio integration with applio.org/models using flask": "flask का उपयोग करके applio.org/models के साथ Applio एकीकरण को सक्षम करें",
@@ -205,10 +187,8 @@
   "Select the theme you want to use. (Requires restarting Applio)": "वह थीम चुनें जिसका आप उपयोग करना चाहते हैं। (Applio को पुनरारंभ करने की आवश्यकता है)",
   "Language": "भाषा",
   "Select the language you want to use. (Requires restarting Applio)": "वह भाषा चुनें जिसका आप उपयोग करना चाहते हैं। (Applio को पुनरारंभ करने की आवश्यकता है)",
-
   "Plugin Installer": "प्लगइन इंस्टॉलर",
   "Drag your plugin.zip to install it": "इसे इंस्टॉल करने के लिए अपने plugin.zip को ड्रैग करें",
-
   "Version Checker": "संस्करण चेकर",
   "Check which version of Applio is the latest to see if you need to update.": "अद्यतित करने के लिए आपको चाहिए या नहीं यह देखने के लिए जाँच करें कि Applio का कौन सा संस्करण नवीनतम है।",
   "Check for updates": "अपडेट जांचें"

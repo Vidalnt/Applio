@@ -24,6 +24,9 @@ import torch.multiprocessing as mp
 now_dir = os.getcwd()
 sys.path.append(os.path.join(now_dir))
 
+# Zluda hijack
+import rvc.lib.zluda
+
 from utils import (
     HParams,
     plot_spectrogram_to_numpy,
@@ -375,12 +378,6 @@ def run(
 
     if torch.cuda.is_available():
         torch.cuda.set_device(rank)
-        if torch.cuda.get_device_name().endswith("[ZLUDA]"):
-            print("Disabling CUDNN for traning with Zluda")
-            torch.backends.cudnn.enabled = False
-            torch.backends.cuda.enable_flash_sdp(False)
-            torch.backends.cuda.enable_math_sdp(True)
-            torch.backends.cuda.enable_mem_efficient_sdp(False)
 
     # Create datasets and dataloaders
     train_dataset = TextAudioLoaderMultiNSFsid(config.data)
@@ -410,7 +407,7 @@ def run(
         config.data.filter_length // 2 + 1,
         config.train.segment_size // config.data.hop_length,
         **config.model,
-        use_f0=pitch_guidance,
+        use_f0=pitch_guidance == True,  # converting 1/0 to True/False
         is_half=config.train.fp16_run and device.type == "cuda",
         sr=sample_rate,
     ).to(device)
@@ -926,7 +923,8 @@ def train_and_evaluate(
                     extract_model(
                         ckpt=ckpt,
                         sr=sample_rate,
-                        pitch_guidance=pitch_guidance,
+                        pitch_guidance=pitch_guidance
+                        == True,  # converting 1/0 to True/False,
                         name=model_name,
                         model_dir=m,
                         epoch=epoch,

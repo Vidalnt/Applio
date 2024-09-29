@@ -155,7 +155,7 @@
   "Select the TTS voice to use for the conversion.": "Válassza ki az átalakításhoz használni kívánt TTS-hangot.",
   "Text to Synthesize": "Szintetizálandó szöveg",
   "Enter the text to synthesize.": "Írja be a szintetizálni kívánt szöveget.",
-  "Or you can upload a .txt file": "Vagy feltölthet egy .txt fájlt",
+  "Upload a .txt file": "Vagy feltölthet egy .txt fájlt",
   "Enter text to synthesize": "Írja be a szintetizálni kívánt szöveget",
   "Output Path for TTS Audio": "A TTS Audio kimeneti útvonala",
   "Output Path for RVC Audio": "Az RVC Audio kimeneti útvonala",

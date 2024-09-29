@@ -1,95 +1,51 @@
-from pydub.silence import detect_nonsilent
-from pydub import AudioSegment
 import numpy as np
-import re
-import os
 import librosa
 
-from rvc.lib.utils import format_title
+
+def process_audio(audio, sr=16000, silence_thresh=-60, min_silence_len=250):
+    """
+    Splits an audio signal into segments using a fixed frame size and hop size.
+
+    Parameters:
+    - audio (np.ndarray): The audio signal to split.
+    - sr (int): The sample rate of the input audio (default is 16000).
+    - silence_thresh (int): Silence threshold (default =-60dB)
+    - min_silence_len (int): Minimum silence duration (default 250ms).
+
+    Returns:
+    - list of np.ndarray: A list of audio segments.
+    - np.ndarray: The intervals where the audio was split.
+    """
+    frame_length = int(min_silence_len / 1000 * sr)
+    hop_length = frame_length // 2
+    intervals = librosa.effects.split(
+        audio, top_db=-silence_thresh, frame_length=frame_length, hop_length=hop_length
+    )
+    audio_segments = [audio[start:end] for start, end in intervals]
+
+    return audio_segments, intervals
 
 
-def process_audio(audio_path, sr=44100, silence_thresh=-70, min_silence_len=750):
-    try:
-        # Convert min_silence_len from ms to frames
-        min_silence_frames = int((min_silence_len / 1000) * sr)
+def merge_audio(audio_segments, intervals, sr_orig, sr_new):
+    """
+    Merges audio segments back into a single audio signal, filling gaps with silence.
 
-        # Detect non-silent parts
-        intervals = librosa.effects.split(
-            audio_path,
-            top_db=-silence_thresh,
-            frame_length=min_silence_frames,
-            hop_length=min_silence_frames // 2,
-        )
+    Parameters:
+    - audio_segments (list of np.ndarray): The non-silent audio segments.
+    - intervals (np.ndarray): The intervals used for splitting the original audio.
+    - sr_orig (int): The sample rate of the original audio
+    - sr_new (int): The sample rate of the model
 
-        segments = []
-        timestamps = []
+    Returns:
+    - np.ndarray: The merged audio signal with silent gaps restored.
+    """
+    sr_ratio = sr_new / sr_orig if sr_new > sr_orig else 1.0
 
-        # Add the first silence segment if any
-        if intervals[0][0] > 0:
-            segments.append(audio_path[: intervals[0][0]])
-            timestamps.append((0, intervals[0][0] / sr))
+    merged_audio = audio_segments[0]
 
-        for i, interval in enumerate(intervals):
-            start, end = interval
-            chunk = audio_path[start:end]
+    for i in range(1, len(intervals)):
+        silence_duration = int((intervals[i][0] - intervals[i - 1][1]) * sr_ratio)
+        silence = np.zeros(silence_duration, dtype=audio_segments[0].dtype)
+        merged_audio = np.concatenate((merged_audio, silence, audio_segments[i]))
 
-            segments.append(chunk)
-            timestamps.append((start / sr, end / sr))  # Convert to seconds
-
-            print(f"Segment {i} created!")
-
-            # Add the next silence segment if any
-            if i < len(intervals) - 1 and end < intervals[i + 1][0]:
-                segments.append(audio_path[end : intervals[i + 1][0]])
-                timestamps.append((end / sr, intervals[i + 1][0] / sr))
-
-        # Add the last silence segment if any
-        if intervals[-1][1] < len(audio_path):
-            segments.append(audio_path[intervals[-1][1] :])
-            timestamps.append((intervals[-1][1] / sr, len(audio_path) / sr))
-
-        print(f"Total segments created: {len(segments)}")
-
-        return "Finish", segments, timestamps
-
-    except Exception as error:
-        print(f"An error occurred while splitting the audio: {error}")
-        return "Error", None, None
-
-
-def merge_audio(segments, timestamps, sample_rate=44100):
-    try:
-        audio_segments = []
-        last_end_time = 0
-
-        print("Starting audio merging process")
-
-        for i, (start_time, end_time) in enumerate(timestamps):
-            silence_duration = max(start_time - last_end_time, 0)
-            silence = AudioSegment.silent(
-                duration=silence_duration, frame_rate=sample_rate
-            )
-            audio_segments.append(silence)
-
-            segment_audio = AudioSegment(
-                segments[i].tobytes(),
-                frame_rate=sample_rate,
-                sample_width=segments[i].dtype.itemsize,
-                channels=1 if segments[i].ndim == 1 else segments[i].shape[1],
-            )
-            audio_segments.append(segment_audio)
-
-            last_end_time = end_time
-
-            print(f"Processed segment {i+1}/{len(timestamps)}")
-
-        merged_audio = sum(audio_segments)
-
-        merged_audio_np = np.array(merged_audio.get_array_of_samples())
-
-        print("Audio merging completed successfully")
-        return sample_rate, merged_audio_np
-
-    except Exception as error:
-        print(f"An error occurred during audio merging: {error}")
-        return None, None
+    return merged_audio

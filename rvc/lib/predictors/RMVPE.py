@@ -408,15 +408,6 @@ class MelSpectrogram(torch.nn.Module):
             self.hann_window[keyshift_key] = torch.hann_window(win_length_new).to(
                 audio.device
             )
-
-        # Zluda, fall-back to CPU for FFTs since HIP SDK has no cuFFT alternative
-        source_device = audio.device
-        if audio.device.type == "cuda" and torch.cuda.get_device_name().endswith(
-            "[ZLUDA]"
-        ):
-            audio = audio.to("cpu")
-            self.hann_window[keyshift_key] = self.hann_window[keyshift_key].to("cpu")
-
         fft = torch.stft(
             audio,
             n_fft=n_fft_new,
@@ -425,7 +416,7 @@ class MelSpectrogram(torch.nn.Module):
             window=self.hann_window[keyshift_key],
             center=center,
             return_complex=True,
-        ).to(source_device)
+        )
 
         magnitude = torch.sqrt(fft.real.pow(2) + fft.imag.pow(2))
         if keyshift != 0:

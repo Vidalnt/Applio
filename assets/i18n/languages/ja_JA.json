@@ -155,7 +155,7 @@
   "Select the TTS voice to use for the conversion.": "変換に使用する TTS 音声を選択します。",
   "Text to Synthesize": "合成するテキスト",
   "Enter the text to synthesize.": "合成するテキストを入力します。",
-  "Or you can upload a .txt file": "または、.txtファイルをアップロードすることもできます",
+  "Upload a .txt file": "または、.txtファイルをアップロードすることもできます",
   "Enter text to synthesize": "合成するテキストを入力する",
   "Output Path for TTS Audio": "TTSオーディオの出力パス",
   "Output Path for RVC Audio": "RVCオーディオの出力パス",

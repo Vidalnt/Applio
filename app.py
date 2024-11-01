@@ -48,6 +48,7 @@ i18n = I18nAuto()
 
 # Start Discord presence if enabled
 from tabs.settings.sections.presence import load_config_presence
+
 if load_config_presence():
     from assets.discord_presence import RPCManager
 

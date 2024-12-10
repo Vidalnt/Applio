@@ -38,7 +38,6 @@ jobs:
           pip install uv huggingface_hub
           uv venv .venv --python 3.10.12
           uv pip install -r requirements.txt
-          uv pip install https://github.com/IAHispano/imjoy-elfinder.git
           uv pip uninstall torch torchvision torchaudio
           . .venv/bin/activate
           python -m ensurepip

@@ -64,7 +64,7 @@ def voice_blender_tab():
                 "Adjusting the position more towards one side or the other will make the model more similar to the first or second."
             ),
         )
-        model_fusion_button = gr.Button(i18n("Fusion"), variant="primary")
+        model_fusion_button = gr.Button(i18n("Fusion"))
         with gr.Row():
             model_fusion_output_info = gr.Textbox(
                 label=i18n("Output Information"),

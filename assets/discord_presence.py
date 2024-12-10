@@ -1,6 +1,5 @@
 from pypresence import Presence
 import datetime as dt
-import time
 
 
 class RichPresenceManager:
@@ -32,7 +31,7 @@ class RichPresenceManager:
                 details="Open ecosystem for voice cloning",
                 buttons=[
                     {"label": "Home", "url": "https://applio.org"},
-                    {"label": "Download", "url": "https://applio.org/download"},
+                    {"label": "Download", "url": "https://applio.org/products/applio"},
                 ],
                 large_image="logo",
                 large_text="Experimenting with applio",

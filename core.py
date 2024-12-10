@@ -33,7 +33,7 @@ def load_voices_data():
 
 
 voices_data = load_voices_data()
-locales = list({voice["Locale"] for voice in voices_data})
+locales = list({voice["ShortName"] for voice in voices_data})
 
 
 @lru_cache(maxsize=None)
@@ -69,7 +69,6 @@ def run_infer_script(
     clean_audio: bool,
     clean_strength: float,
     export_format: str,
-    upscale_audio: bool,
     f0_file: str,
     embedder_model: str,
     embedder_model_custom: str = None,
@@ -134,7 +133,6 @@ def run_infer_script(
         "clean_audio": clean_audio,
         "clean_strength": clean_strength,
         "export_format": export_format,
-        "upscale_audio": upscale_audio,
         "f0_file": f0_file,
         "embedder_model": embedder_model,
         "embedder_model_custom": embedder_model_custom,
@@ -207,7 +205,6 @@ def run_batch_infer_script(
     clean_audio: bool,
     clean_strength: float,
     export_format: str,
-    upscale_audio: bool,
     f0_file: str,
     embedder_model: str,
     embedder_model_custom: str = None,
@@ -272,7 +269,6 @@ def run_batch_infer_script(
         "clean_audio": clean_audio,
         "clean_strength": clean_strength,
         "export_format": export_format,
-        "upscale_audio": upscale_audio,
         "f0_file": f0_file,
         "embedder_model": embedder_model,
         "embedder_model_custom": embedder_model_custom,
@@ -348,7 +344,6 @@ def run_tts_script(
     clean_audio: bool,
     clean_strength: float,
     export_format: str,
-    upscale_audio: bool,
     f0_file: str,
     embedder_model: str,
     embedder_model_custom: str = None,
@@ -394,7 +389,6 @@ def run_tts_script(
         clean_audio=clean_audio,
         clean_strength=clean_strength,
         export_format=export_format,
-        upscale_audio=upscale_audio,
         f0_file=f0_file,
         embedder_model=embedder_model,
         embedder_model_custom=embedder_model_custom,
@@ -823,14 +817,6 @@ def parse_arguments():
         type=str,
         help=embedder_model_custom_description,
         default=None,
-    )
-    upscale_audio_description = "Upscale the input audio to a higher quality before processing. This can improve the overall quality of the output, especially for low-quality input audio."
-    infer_parser.add_argument(
-        "--upscale_audio",
-        type=lambda x: bool(strtobool(x)),
-        choices=[True, False],
-        help=upscale_audio_description,
-        default=False,
     )
     f0_file_description = "Full path to an external F0 file (.f0). This allows you to use pre-computed pitch values for the input audio."
     infer_parser.add_argument(
@@ -1347,13 +1333,6 @@ def parse_arguments():
         default=None,
     )
     batch_infer_parser.add_argument(
-        "--upscale_audio",
-        type=lambda x: bool(strtobool(x)),
-        choices=[True, False],
-        help=upscale_audio_description,
-        default=False,
-    )
-    batch_infer_parser.add_argument(
         "--f0_file",
         type=str,
         help=f0_file_description,
@@ -1841,13 +1820,6 @@ def parse_arguments():
         default=None,
     )
     tts_parser.add_argument(
-        "--upscale_audio",
-        type=lambda x: bool(strtobool(x)),
-        choices=[True, False],
-        help=upscale_audio_description,
-        default=False,
-    )
-    tts_parser.add_argument(
         "--f0_file",
         type=str,
         help=f0_file_description,
@@ -2317,7 +2289,6 @@ def main():
                 export_format=args.export_format,
                 embedder_model=args.embedder_model,
                 embedder_model_custom=args.embedder_model_custom,
-                upscale_audio=args.upscale_audio,
                 f0_file=args.f0_file,
                 formant_shifting=args.formant_shifting,
                 formant_qfrency=args.formant_qfrency,
@@ -2381,7 +2352,6 @@ def main():
                 export_format=args.export_format,
                 embedder_model=args.embedder_model,
                 embedder_model_custom=args.embedder_model_custom,
-                upscale_audio=args.upscale_audio,
                 f0_file=args.f0_file,
                 formant_shifting=args.formant_shifting,
                 formant_qfrency=args.formant_qfrency,
@@ -2437,8 +2407,8 @@ def main():
                 protect=args.protect,
                 hop_length=args.hop_length,
                 f0_method=args.f0_method,
-                input_path=args.input_path,
-                output_path=args.output_path,
+                output_tts_path=args.output_tts_path,
+                output_rvc_path=args.output_rvc_path,
                 pth_path=args.pth_path,
                 index_path=args.index_path,
                 split_audio=args.split_audio,
@@ -2449,7 +2419,6 @@ def main():
                 export_format=args.export_format,
                 embedder_model=args.embedder_model,
                 embedder_model_custom=args.embedder_model_custom,
-                upscale_audio=args.upscale_audio,
                 f0_file=args.f0_file,
             )
         elif args.mode == "preprocess":

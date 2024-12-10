@@ -83,7 +83,7 @@ with gr.Blocks(
     )
     gr.Markdown(
         i18n(
-            "[Support](https://discord.gg/urxFjYmYYh) — [Discord Bot](https://discord.com/oauth2/authorize?client_id=1144714449563955302&permissions=1376674695271&scope=bot%20applications.commands) — [Find Voices](https://applio.org/models) — [GitHub](https://github.com/IAHispano/Applio)"
+            "[Support](https://discord.gg/urxFjYmYYh) — [Discord Bot](https://discord.com/oauth2/authorize?client_id=1144714449563955302&permissions=1376674695271&scope=bot%20applications.commands) — [GitHub](https://github.com/IAHispano/Applio)"
         )
     )
     with gr.Tab(i18n("Inference")):

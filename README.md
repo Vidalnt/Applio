@@ -36,6 +36,17 @@
 
 Applio is a powerful voice conversion tool focused on simplicity, quality, and performance. Whether you're an artist, developer, or researcher, Applio offers a straightforward platform for high-quality voice transformations. Its flexible design allows for customization through plugins and configurations, catering to a wide range of projects.
 
+## Terms of Use
+The use of Applio is entirely at your own discretion and responsibility. By using this tool, you agree to:
+
+1. Respect all applicable copyrights, intellectual property rights, and privacy rights. Ensure that any audio or material processed through Applio is either owned by you or used with explicit permission from the rightful owner.
+
+2. Avoid using Applio in ways that may harm, defame, or infringe upon the rights of others. This includes, but is not limited to, the creation or distribution of unauthorized content.
+
+3. Comply with all relevant laws and regulations governing the use of AI and voice transformation tools in your jurisdiction.
+
+Applio and its contributors are not liable for any misuse of the tool. The responsibility for adhering to ethical practices and legal compliance lies solely with the user. Applio does not endorse or support any activities that result in harm to individuals, groups, or entities. All official models distributed by Applio have been trained under public use datasets such as [VCTK](https://huggingface.co/datasets/IAHispano/Applio-Dataset).
+
 ## Getting Started
 
 ### 1. Installation

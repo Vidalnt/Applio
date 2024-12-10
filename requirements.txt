@@ -6,20 +6,14 @@ numpy==1.23.5
 requests>=2.31.0,<2.32.0
 tqdm
 wget
-pydantic==2.8.2
-fastapi==0.112.0
-starlette==0.37.2
 
 # Audio processing
 ffmpeg-python>=0.2.0
 faiss-cpu==1.7.3
 librosa==0.9.2
-pyworld==0.3.4
 scipy==1.11.1
 soundfile==0.12.1
-praat-parselmouth
 noisereduce
-versatile-audio-upscaler
 pedalboard
 stftpitchshift
 
@@ -39,16 +33,13 @@ transformers==4.44.2
 # Visualization and UI
 matplotlib==3.7.2
 tensorboard
-gradio==4.43.0
+gradio==5.5.0
 
 # Miscellaneous utilities
 certifi>=2023.07.22; sys_platform == 'darwin'  
 antlr4-python3-runtime==4.8; sys_platform == 'darwin'
-ffmpy==0.3.1
 tensorboardX
 edge-tts==6.1.9
 pypresence
 beautifulsoup4
 flask
-local-attention
-

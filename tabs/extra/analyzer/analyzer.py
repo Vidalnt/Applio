@@ -20,9 +20,7 @@ def analyzer_tab():
             max_lines=8,
             interactive=False,
         )
-        get_info_button = gr.Button(
-            value=i18n("Get information about the audio"), variant="primary"
-        )
+        get_info_button = gr.Button(value=i18n("Get information about the audio"))
         image_output = gr.Image(type="filepath", interactive=False)
 
     get_info_button.click(

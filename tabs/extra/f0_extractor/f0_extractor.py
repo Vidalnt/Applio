@@ -52,7 +52,7 @@ def f0_extractor_tab():
                 choices=["crepe", "fcpe", "rmvpe"],
                 value="rmvpe",
             )
-        button = gr.Button(i18n("Extract F0 Curve"), variant="primary")
+        button = gr.Button(i18n("Extract F0 Curve"))
 
     with gr.Accordion(label=i18n("Output Information")):
         txt_output = gr.File(label="F0 Curve", type="filepath")

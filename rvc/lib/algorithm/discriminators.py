@@ -15,13 +15,16 @@ class MultiPeriodDiscriminator(torch.nn.Module):
     the input signal at different periods.
 
     Args:
+        periods (str): Periods of the discriminator. V1 = [2, 3, 5, 7, 11, 17], V2 = [2, 3, 5, 7, 11, 17, 23, 37].
         use_spectral_norm (bool): Whether to use spectral normalization.
             Defaults to False.
     """
 
-    def __init__(self, use_spectral_norm=False):
+    def __init__(self, version: str, use_spectral_norm: bool = False):
         super(MultiPeriodDiscriminator, self).__init__()
-        periods = [2, 3, 5, 7, 11, 17]
+        periods = (
+            [2, 3, 5, 7, 11, 17] if version == "v1" else [2, 3, 5, 7, 11, 17, 23, 37]
+        )
         self.discriminators = torch.nn.ModuleList(
             [DiscriminatorS(use_spectral_norm=use_spectral_norm)]
             + [DiscriminatorP(p, use_spectral_norm=use_spectral_norm) for p in periods]
@@ -30,48 +33,6 @@ class MultiPeriodDiscriminator(torch.nn.Module):
     def forward(self, y, y_hat):
         """
         Forward pass of the multi-period discriminator.
-
-        Args:
-            y (torch.Tensor): Real audio signal.
-            y_hat (torch.Tensor): Fake audio signal.
-        """
-        y_d_rs, y_d_gs, fmap_rs, fmap_gs = [], [], [], []
-        for d in self.discriminators:
-            y_d_r, fmap_r = d(y)
-            y_d_g, fmap_g = d(y_hat)
-            y_d_rs.append(y_d_r)
-            y_d_gs.append(y_d_g)
-            fmap_rs.append(fmap_r)
-            fmap_gs.append(fmap_g)
-
-        return y_d_rs, y_d_gs, fmap_rs, fmap_gs
-
-
-class MultiPeriodDiscriminatorV2(torch.nn.Module):
-    """
-    Multi-period discriminator V2.
-
-    This class implements a multi-period discriminator V2, which is used
-    to discriminate between real and fake audio signals. The discriminator
-    is composed of a series of convolutional layers that are applied to
-    the input signal at different periods.
-
-    Args:
-        use_spectral_norm (bool): Whether to use spectral normalization.
-            Defaults to False.
-    """
-
-    def __init__(self, use_spectral_norm=False):
-        super(MultiPeriodDiscriminatorV2, self).__init__()
-        periods = [2, 3, 5, 7, 11, 17, 23, 37]
-        self.discriminators = torch.nn.ModuleList(
-            [DiscriminatorS(use_spectral_norm=use_spectral_norm)]
-            + [DiscriminatorP(p, use_spectral_norm=use_spectral_norm) for p in periods]
-        )
-
-    def forward(self, y, y_hat):
-        """
-        Forward pass of the multi-period discriminator V2.
 
         Args:
             y (torch.Tensor): Real audio signal.
@@ -98,7 +59,7 @@ class DiscriminatorS(torch.nn.Module):
     convolutional layers that are applied to the input signal.
     """
 
-    def __init__(self, use_spectral_norm=False):
+    def __init__(self, use_spectral_norm: bool = False):
         super(DiscriminatorS, self).__init__()
         norm_f = spectral_norm if use_spectral_norm else weight_norm
         self.convs = torch.nn.ModuleList(
@@ -142,14 +103,18 @@ class DiscriminatorP(torch.nn.Module):
 
     Args:
         period (int): Period of the discriminator.
-        kernel_size (int): Kernel size of the convolutional layers.
-            Defaults to 5.
+        kernel_size (int): Kernel size of the convolutional layers. Defaults to 5.
         stride (int): Stride of the convolutional layers. Defaults to 3.
-        use_spectral_norm (bool): Whether to use spectral normalization.
-            Defaults to False.
+        use_spectral_norm (bool): Whether to use spectral normalization. Defaults to False.
     """
 
-    def __init__(self, period, kernel_size=5, stride=3, use_spectral_norm=False):
+    def __init__(
+        self,
+        period: int,
+        kernel_size: int = 5,
+        stride: int = 3,
+        use_spectral_norm: bool = False,
+    ):
         super(DiscriminatorP, self).__init__()
         self.period = period
         norm_f = spectral_norm if use_spectral_norm else weight_norm

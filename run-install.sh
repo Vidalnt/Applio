@@ -19,7 +19,7 @@ find_python() {
             return
         fi
     done
-    log_message "No compatible Python installation found. Please install Python 3.7+."
+    log_message "No compatible Python installation found. Please install Python 3.10."
     exit 1
 }
 
@@ -65,7 +65,6 @@ install_ffmpeg_flatpak() {
         flatpak install --user -y flathub org.freedesktop.Platform.ffmpeg
     fi
 }
-
 
 install_python_ffmpeg() {
     log_message "Installing python-ffmpeg..."
@@ -158,7 +157,19 @@ if [ "$(uname)" = "Darwin" ]; then
         log_message "Homebrew not found. Installing Homebrew..."
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     fi
-    brew install python@3.10
+
+    # Check installed Python version and install the correct Homebrew Python version (macOS)
+    python_version=$(python3 --version | awk '{print $2}' | cut -d'.' -f1,2)
+    if [ "$python_version" = "3.9" ]; then
+        log_message "Python 3.9 detected. Installing Python 3.10 using Homebrew..."
+        brew install python@3.10
+        export PATH="/opt/homebrew/opt/python@3.10/bin:$PATH"
+    elif [ "$python_version" != "3.10" ]; then
+        log_message "Unsupported Python version detected: $python_version. Please use Python 3.10."
+        exit 1
+    fi
+
+    brew install faiss
     export PYTORCH_ENABLE_MPS_FALLBACK=1
     export PYTORCH_MPS_HIGH_WATERMARK_RATIO=0.0
     export PATH="/opt/homebrew/bin:$PATH"  
@@ -169,3 +180,5 @@ elif [ "$(uname)" != "Linux" ]; then
 fi
 
 prepare_install
+
+

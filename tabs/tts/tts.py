@@ -85,7 +85,7 @@ def tts_tab():
 
     gr.Markdown(
         i18n(
-            f"Applio is a Speech-to-Speech conversion software, utilizing EdgeTTS as middleware for running the Text-to-Speech (TTS) component. Read more about it [here!](https://docs.applio.org/getting-started/tts#disclaimer)"
+            f"Applio is a Speech-to-Speech conversion software, utilizing EdgeTTS as middleware for running the Text-to-Speech (TTS) component. Read more about it [here!](https://docs.applio.org/applio/getting-started/tts)"
         )
     )
     tts_voice = gr.Dropdown(
@@ -203,15 +203,6 @@ def tts_tab():
                 ),
                 visible=True,
                 value=0.5,
-                interactive=True,
-            )
-            upscale_audio = gr.Checkbox(
-                label=i18n("Upscale Audio"),
-                info=i18n(
-                    "Upscale the audio to a higher quality, recommended for low-quality audios. (It could take longer to process the audio)"
-                ),
-                visible=True,
-                value=False,
                 interactive=True,
             )
             pitch = gr.Slider(
@@ -369,7 +360,7 @@ def tts_tab():
     refresh_button.click(
         fn=change_choices,
         inputs=[model_file],
-        outputs=[model_file, index_file, sid],
+        outputs=[model_file, index_file, sid, sid],
     )
     txt_file.upload(
         fn=process_input,
@@ -415,7 +406,6 @@ def tts_tab():
             clean_audio,
             clean_strength,
             export_format,
-            upscale_audio,
             f0_file,
             embedder_model,
             embedder_model_custom,

@@ -328,9 +328,9 @@ def model_download_pipeline(url: str):
                                         extract_folder_path, model_name + ".pth"
                                     ),
                                 )
-                        else:
-                            if "v2" not in item:
-                                if "_nprobe_1_" in item and "_v1" in item:
+                        elif ".index" in item:
+                            if "_nprobe_1_" in item:
+                                if "_v1" in item:
                                     file_name = item.split("_nprobe_1_")[1].split(
                                         "_v1"
                                     )[0]
@@ -348,8 +348,7 @@ def model_download_pipeline(url: str):
                                                 new_file_name + ".index",
                                             ),
                                         )
-                            else:
-                                if "_nprobe_1_" in item and "_v2" in item:
+                                elif "_v2" in item:
                                     file_name = item.split("_nprobe_1_")[1].split(
                                         "_v2"
                                     )[0]
@@ -367,6 +366,14 @@ def model_download_pipeline(url: str):
                                                 new_file_name + ".index",
                                             ),
                                         )
+                            else:
+                                os.rename(
+                                    os.path.join(extract_folder_path, item),
+                                    os.path.join(
+                                        extract_folder_path,
+                                        model_name + ".index",
+                                    ),
+                                )
 
                     if success:
                         print(f"Model {model_name} downloaded!")

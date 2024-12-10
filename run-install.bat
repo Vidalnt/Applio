@@ -8,7 +8,7 @@ echo.
 set "INSTALL_DIR=%cd%"
 set "MINICONDA_DIR=%UserProfile%\Miniconda3"
 set "ENV_DIR=%INSTALL_DIR%\env"
-set "MINICONDA_URL=https://repo.anaconda.com/miniconda/Miniconda3-py39_23.9.0-0-Windows-x86_64.exe"
+set "MINICONDA_URL=https://repo.anaconda.com/miniconda/Miniconda3-py310_24.7.1-0-Windows-x86_64.exe"
 set "CONDA_EXE=%MINICONDA_DIR%\Scripts\conda.exe"
 
 call :cleanup
@@ -49,7 +49,7 @@ exit /b 0
 
 :create_conda_env
 echo Creating Conda environment...
-call "%MINICONDA_DIR%\_conda.exe" create --no-shortcuts -y -k --prefix "%ENV_DIR%" python=3.9
+call "%MINICONDA_DIR%\_conda.exe" create --no-shortcuts -y -k --prefix "%ENV_DIR%" python=3.10
 if errorlevel 1 goto :error
 echo Conda environment created successfully.
 echo.

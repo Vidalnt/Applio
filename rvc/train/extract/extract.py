@@ -249,7 +249,7 @@ if __name__ == "__main__":
     version = sys.argv[6]
     sample_rate = sys.argv[7]
     embedder_model = sys.argv[8]
-    embedder_model_custom = sys.argv[9] if len(sys.argv) > 10 else None
+    embedder_model_custom = sys.argv[9] if len(sys.argv) > 9 else None
 
     # prep
     wav_path = os.path.join(exp_dir, "sliced_audios_16k")

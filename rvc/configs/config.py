@@ -2,7 +2,6 @@ import torch
 import json
 import os
 
-
 version_config_paths = [
     os.path.join("v1", "32000.json"),
     os.path.join("v1", "40000.json"),
@@ -45,14 +44,6 @@ class Config:
             with open(config_path, "r") as f:
                 configs[config_file] = json.load(f)
         return configs
-
-    def has_mps(self) -> bool:
-        # Check if Metal Performance Shaders are available - for macOS 12.3+.
-        return torch.backends.mps.is_available()
-
-    def has_xpu(self) -> bool:
-        # Check if XPU is available.
-        return hasattr(torch, "xpu") and torch.xpu.is_available()
 
     def set_precision(self, precision):
         if precision not in ["fp32", "fp16"]:
@@ -109,10 +100,6 @@ class Config:
     def device_config(self) -> tuple:
         if self.device.startswith("cuda"):
             self.set_cuda_config()
-        elif self.has_mps():
-            self.device = "mps"
-            self.is_half = False
-            self.set_precision("fp32")
         else:
             self.device = "cpu"
             self.is_half = False

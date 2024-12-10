@@ -24,14 +24,13 @@ class Encoder(torch.nn.Module):
 
     def __init__(
         self,
-        hidden_channels,
-        filter_channels,
-        n_heads,
-        n_layers,
-        kernel_size=1,
-        p_dropout=0.0,
-        window_size=10,
-        **kwargs
+        hidden_channels: int,
+        filter_channels: int,
+        n_heads: int,
+        n_layers: int,
+        kernel_size: int = 1,
+        p_dropout: float = 0.0,
+        window_size: int = 10,
     ):
         super().__init__()
         self.hidden_channels = hidden_channels
@@ -72,6 +71,7 @@ class Encoder(torch.nn.Module):
     def forward(self, x, x_mask):
         attn_mask = x_mask.unsqueeze(2) * x_mask.unsqueeze(-1)
         x = x * x_mask
+
         for i in range(self.n_layers):
             y = self.attn_layers[i](x, x, attn_mask)
             y = self.drop(y)
@@ -80,8 +80,8 @@ class Encoder(torch.nn.Module):
             y = self.ffn_layers[i](x, x_mask)
             y = self.drop(y)
             x = self.norm_layers_2[i](x + y)
-        x = x * x_mask
-        return x
+
+        return x * x_mask
 
 
 class TextEncoder(torch.nn.Module):
@@ -101,15 +101,15 @@ class TextEncoder(torch.nn.Module):
 
     def __init__(
         self,
-        out_channels,
-        hidden_channels,
-        filter_channels,
-        n_heads,
-        n_layers,
-        kernel_size,
-        p_dropout,
-        embedding_dim,
-        f0=True,
+        out_channels: int,
+        hidden_channels: int,
+        filter_channels: int,
+        n_heads: int,
+        n_layers: int,
+        kernel_size: int,
+        p_dropout: float,
+        embedding_dim: int,
+        f0: bool = True,
     ):
         super(TextEncoder, self).__init__()
         self.out_channels = out_channels
@@ -166,13 +166,13 @@ class PosteriorEncoder(torch.nn.Module):
 
     def __init__(
         self,
-        in_channels,
-        out_channels,
-        hidden_channels,
-        kernel_size,
-        dilation_rate,
-        n_layers,
-        gin_channels=0,
+        in_channels: int,
+        out_channels: int,
+        hidden_channels: int,
+        kernel_size: int,
+        dilation_rate: int,
+        n_layers: int,
+        gin_channels: int = 0,
     ):
         super(PosteriorEncoder, self).__init__()
         self.in_channels = in_channels
@@ -197,11 +197,17 @@ class PosteriorEncoder(torch.nn.Module):
         self, x: torch.Tensor, x_lengths: torch.Tensor, g: Optional[torch.Tensor] = None
     ):
         x_mask = torch.unsqueeze(sequence_mask(x_lengths, x.size(2)), 1).to(x.dtype)
+
         x = self.pre(x) * x_mask
         x = self.enc(x, x_mask, g=g)
+
         stats = self.proj(x) * x_mask
         m, logs = torch.split(stats, self.out_channels, dim=1)
-        z = (m + torch.randn_like(m) * torch.exp(logs)) * x_mask
+
+        logs_exp = torch.exp(logs)
+        z = m + torch.randn_like(m) * logs_exp
+        z = z * x_mask
+
         return z, m, logs, x_mask
 
     def remove_weight_norm(self):

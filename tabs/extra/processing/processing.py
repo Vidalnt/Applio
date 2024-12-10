@@ -29,7 +29,7 @@ def processing_tab():
             value="",
             max_lines=11,
         )
-        model_view_button = gr.Button(i18n("View"), variant="primary")
+        model_view_button = gr.Button(i18n("View"))
         model_view_button.click(
             fn=run_model_information_script,
             inputs=[model_view_model_path],

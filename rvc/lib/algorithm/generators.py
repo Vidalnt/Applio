@@ -1,14 +1,15 @@
 import torch
+import numpy as np
 from torch.nn.utils import remove_weight_norm
 from torch.nn.utils.parametrizations import weight_norm
 from typing import Optional
 
-from rvc.lib.algorithm.residuals import LRELU_SLOPE, ResBlock1, ResBlock2
+from rvc.lib.algorithm.residuals import LRELU_SLOPE, ResBlock
 from rvc.lib.algorithm.commons import init_weights
 
 
 class Generator(torch.nn.Module):
-    """Generator for synthesizing audio. Optimized for performance and quality.
+    """Generator for synthesizing audio.
 
     Args:
         initial_channel (int): Number of channels in the initial convolutional layer.
@@ -23,14 +24,13 @@ class Generator(torch.nn.Module):
 
     def __init__(
         self,
-        initial_channel,
-        resblock,
-        resblock_kernel_sizes,
-        resblock_dilation_sizes,
-        upsample_rates,
-        upsample_initial_channel,
-        upsample_kernel_sizes,
-        gin_channels=0,
+        initial_channel: int,
+        resblock_kernel_sizes: list,
+        resblock_dilation_sizes: list,
+        upsample_rates: list,
+        upsample_initial_channel: int,
+        upsample_kernel_sizes: list,
+        gin_channels: int = 0,
     ):
         super(Generator, self).__init__()
         self.num_kernels = len(resblock_kernel_sizes)
@@ -38,7 +38,6 @@ class Generator(torch.nn.Module):
         self.conv_pre = torch.nn.Conv1d(
             initial_channel, upsample_initial_channel, 7, 1, padding=3
         )
-        resblock = ResBlock1 if resblock == "1" else ResBlock2
 
         self.ups = torch.nn.ModuleList()
         self.resblocks = torch.nn.ModuleList()
@@ -59,7 +58,7 @@ class Generator(torch.nn.Module):
             for j, (k, d) in enumerate(
                 zip(resblock_kernel_sizes, resblock_dilation_sizes)
             ):
-                self.resblocks.append(resblock(ch, k, d))
+                self.resblocks.append(ResBlock(ch, k, d))
 
         self.conv_post = torch.nn.Conv1d(ch, 1, 7, 1, padding=3, bias=False)
         self.ups.apply(init_weights)
@@ -108,92 +107,123 @@ class Generator(torch.nn.Module):
             l.remove_weight_norm()
 
 
-class SineGen(torch.nn.Module):
-    """Sine wave generator.
+class SineGenerator(torch.nn.Module):
+    """
+    A sine wave generator that synthesizes waveforms with optional harmonic overtones and noise.
 
     Args:
-        samp_rate (int): Sampling rate in Hz.
-        harmonic_num (int, optional): Number of harmonic overtones. Defaults to 0.
-        sine_amp (float, optional): Amplitude of sine waveform. Defaults to 0.1.
-        noise_std (float, optional): Standard deviation of Gaussian noise. Defaults to 0.003.
-        voiced_threshold (float, optional): F0 threshold for voiced/unvoiced classification. Defaults to 0.
-        flag_for_pulse (bool, optional): Whether this SineGen is used inside PulseGen. Defaults to False.
+        sampling_rate (int): The sampling rate in Hz.
+        num_harmonics (int, optional): The number of harmonic overtones to include. Defaults to 0.
+        sine_amplitude (float, optional): The amplitude of the sine waveform. Defaults to 0.1.
+        noise_stddev (float, optional): The standard deviation of Gaussian noise. Defaults to 0.003.
+        voiced_threshold (float, optional): F0 threshold for distinguishing voiced/unvoiced frames. Defaults to 0.
     """
 
     def __init__(
         self,
-        samp_rate,
-        harmonic_num=0,
-        sine_amp=0.1,
-        noise_std=0.003,
-        voiced_threshold=0,
-        flag_for_pulse=False,
+        sampling_rate: int,
+        num_harmonics: int = 0,
+        sine_amplitude: float = 0.1,
+        noise_stddev: float = 0.003,
+        voiced_threshold: float = 0.0,
     ):
-        super(SineGen, self).__init__()
-        self.sine_amp = sine_amp
-        self.noise_std = noise_std
-        self.harmonic_num = harmonic_num
-        self.dim = self.harmonic_num + 1
-        self.sample_rate = samp_rate
+        super(SineGenerator, self).__init__()
+        self.sampling_rate = sampling_rate
+        self.num_harmonics = num_harmonics
+        self.sine_amplitude = sine_amplitude
+        self.noise_stddev = noise_stddev
         self.voiced_threshold = voiced_threshold
+        self.waveform_dim = self.num_harmonics + 1  # fundamental + harmonics
 
-    def _f02uv(self, f0):
-        """Converts F0 to voiced/unvoiced signal.
-
-        Args:
-            f0 (torch.Tensor): F0 tensor with shape (batch_size, length, 1)..
+    def _compute_voiced_unvoiced(self, f0: torch.Tensor) -> torch.Tensor:
         """
-        uv = torch.ones_like(f0)
-        uv = uv * (f0 > self.voiced_threshold)
-        return uv
-
-    def forward(self, f0: torch.Tensor, upp: int):
-        """Generates sine waves.
+        Generate a binary mask to indicate voiced/unvoiced frames.
 
         Args:
-            f0 (torch.Tensor): F0 tensor with shape (batch_size, length, 1).
-            upp (int): Upsampling factor.
+            f0 (torch.Tensor): Fundamental frequency tensor (batch_size, length).
+        """
+        uv_mask = (f0 > self.voiced_threshold).float()
+        return uv_mask
+
+    def _generate_sine_wave(
+        self, f0: torch.Tensor, upsampling_factor: int
+    ) -> torch.Tensor:
+        """
+        Generate sine waves for the fundamental frequency and its harmonics.
+
+        Args:
+            f0 (torch.Tensor): Fundamental frequency tensor (batch_size, length, 1).
+            upsampling_factor (int): Upsampling factor.
+        """
+        batch_size, length, _ = f0.shape
+
+        # Create an upsampling grid
+        upsampling_grid = torch.arange(
+            1, upsampling_factor + 1, dtype=f0.dtype, device=f0.device
+        )
+
+        # Calculate phase increments
+        phase_increments = (f0 / self.sampling_rate) * upsampling_grid
+        phase_remainder = torch.fmod(phase_increments[:, :-1, -1:] + 0.5, 1.0) - 0.5
+        cumulative_phase = phase_remainder.cumsum(dim=1).fmod(1.0).to(f0.dtype)
+        phase_increments += torch.nn.functional.pad(
+            cumulative_phase, (0, 0, 1, 0), mode="constant"
+        )
+
+        # Reshape to match the sine wave shape
+        phase_increments = phase_increments.reshape(batch_size, -1, 1)
+
+        # Scale for harmonics
+        harmonic_scale = torch.arange(
+            1, self.waveform_dim + 1, dtype=f0.dtype, device=f0.device
+        ).reshape(1, 1, -1)
+        phase_increments *= harmonic_scale
+
+        # Add random phase offset (except for the fundamental)
+        random_phase = torch.rand(1, 1, self.waveform_dim, device=f0.device)
+        random_phase[..., 0] = 0  # Fundamental frequency has no random offset
+        phase_increments += random_phase
+
+        # Generate sine waves
+        sine_waves = torch.sin(2 * np.pi * phase_increments)
+        return sine_waves
+
+    def forward(self, f0: torch.Tensor, upsampling_factor: int):
+        """
+        Forward pass to generate sine waveforms with noise and voiced/unvoiced masking.
+
+        Args:
+            f0 (torch.Tensor): Fundamental frequency tensor (batch_size, length, 1).
+            upsampling_factor (int): Upsampling factor.
         """
         with torch.no_grad():
-            f0 = f0[:, None].transpose(1, 2)
-            f0_buf = torch.zeros(f0.shape[0], f0.shape[1], self.dim, device=f0.device)
-            f0_buf[:, :, 0] = f0[:, :, 0]
-            f0_buf[:, :, 1:] = (
-                f0_buf[:, :, 0:1]
-                * torch.arange(2, self.harmonic_num + 2, device=f0.device)[
-                    None, None, :
-                ]
+            # Expand `f0` to include waveform dimensions
+            f0 = f0.unsqueeze(-1)
+
+            # Generate sine waves
+            sine_waves = (
+                self._generate_sine_wave(f0, upsampling_factor) * self.sine_amplitude
             )
-            rad_values = (f0_buf / float(self.sample_rate)) % 1
-            rand_ini = torch.rand(
-                f0_buf.shape[0], f0_buf.shape[2], device=f0_buf.device
+
+            # Compute voiced/unvoiced mask
+            voiced_mask = self._compute_voiced_unvoiced(f0)
+
+            # Upsample voiced/unvoiced mask
+            voiced_mask = torch.nn.functional.interpolate(
+                voiced_mask.transpose(2, 1),
+                scale_factor=float(upsampling_factor),
+                mode="nearest",
+            ).transpose(2, 1)
+
+            # Compute noise amplitude
+            noise_amplitude = voiced_mask * self.noise_stddev + (1 - voiced_mask) * (
+                self.sine_amplitude / 3
             )
-            rand_ini[:, 0] = 0
-            rad_values[:, 0, :] = rad_values[:, 0, :] + rand_ini
-            tmp_over_one = torch.cumsum(rad_values, 1)
-            tmp_over_one *= upp
-            tmp_over_one = torch.nn.functional.interpolate(
-                tmp_over_one.transpose(2, 1),
-                scale_factor=float(upp),
-                mode="linear",
-                align_corners=True,
-            ).transpose(2, 1)
-            rad_values = torch.nn.functional.interpolate(
-                rad_values.transpose(2, 1), scale_factor=float(upp), mode="nearest"
-            ).transpose(2, 1)
-            tmp_over_one %= 1
-            tmp_over_one_idx = (tmp_over_one[:, 1:, :] - tmp_over_one[:, :-1, :]) < 0
-            cumsum_shift = torch.zeros_like(rad_values)
-            cumsum_shift[:, 1:, :] = tmp_over_one_idx * -1.0
-            sine_waves = torch.sin(
-                torch.cumsum(rad_values + cumsum_shift, dim=1) * 2 * torch.pi
-            )
-            sine_waves = sine_waves * self.sine_amp
-            uv = self._f02uv(f0)
-            uv = torch.nn.functional.interpolate(
-                uv.transpose(2, 1), scale_factor=float(upp), mode="nearest"
-            ).transpose(2, 1)
-            noise_amp = uv * self.noise_std + (1 - uv) * self.sine_amp / 3
-            noise = noise_amp * torch.randn_like(sine_waves)
-            sine_waves = sine_waves * uv + noise
-        return sine_waves, uv, noise
+
+            # Add Gaussian noise
+            noise = noise_amplitude * torch.randn_like(sine_waves)
+
+            # Combine sine waves and noise
+            sine_waveforms = sine_waves * voiced_mask + noise
+
+        return sine_waveforms, voiced_mask, noise

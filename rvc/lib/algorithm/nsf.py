@@ -4,8 +4,8 @@ from torch.nn.utils import remove_weight_norm
 from torch.nn.utils.parametrizations import weight_norm
 from typing import Optional
 
-from rvc.lib.algorithm.generators import SineGen
-from rvc.lib.algorithm.residuals import LRELU_SLOPE, ResBlock1, ResBlock2
+from rvc.lib.algorithm.generators import SineGenerator
+from rvc.lib.algorithm.residuals import LRELU_SLOPE, ResBlock
 from rvc.lib.algorithm.commons import init_weights
 
 
@@ -24,12 +24,12 @@ class SourceModuleHnNSF(torch.nn.Module):
 
     def __init__(
         self,
-        sample_rate,
-        harmonic_num=0,
-        sine_amp=0.1,
-        add_noise_std=0.003,
-        voiced_threshod=0,
-        is_half=True,
+        sample_rate: int,
+        harmonic_num: int = 0,
+        sine_amp: float = 0.1,
+        add_noise_std: float = 0.003,
+        voiced_threshod: float = 0,
+        is_half: bool = True,
     ):
         super(SourceModuleHnNSF, self).__init__()
 
@@ -37,7 +37,7 @@ class SourceModuleHnNSF(torch.nn.Module):
         self.noise_std = add_noise_std
         self.is_half = is_half
 
-        self.l_sin_gen = SineGen(
+        self.l_sin_gen = SineGenerator(
             sample_rate, harmonic_num, sine_amp, add_noise_std, voiced_threshod
         )
         self.l_linear = torch.nn.Linear(harmonic_num + 1, 1)
@@ -69,16 +69,15 @@ class GeneratorNSF(torch.nn.Module):
 
     def __init__(
         self,
-        initial_channel,
-        resblock,
-        resblock_kernel_sizes,
-        resblock_dilation_sizes,
-        upsample_rates,
-        upsample_initial_channel,
-        upsample_kernel_sizes,
-        gin_channels,
-        sr,
-        is_half=False,
+        initial_channel: int,
+        resblock_kernel_sizes: list,
+        resblock_dilation_sizes: list,
+        upsample_rates: list,
+        upsample_initial_channel: int,
+        upsample_kernel_sizes: list,
+        gin_channels: int,
+        sr: int,
+        is_half: bool = False,
     ):
         super(GeneratorNSF, self).__init__()
 
@@ -92,7 +91,6 @@ class GeneratorNSF(torch.nn.Module):
         self.conv_pre = torch.nn.Conv1d(
             initial_channel, upsample_initial_channel, 7, 1, padding=3
         )
-        resblock_cls = ResBlock1 if resblock == "1" else ResBlock2
 
         self.ups = torch.nn.ModuleList()
         self.noise_convs = torch.nn.ModuleList()
@@ -131,7 +129,7 @@ class GeneratorNSF(torch.nn.Module):
 
         self.resblocks = torch.nn.ModuleList(
             [
-                resblock_cls(channels[i], k, d)
+                ResBlock(channels[i], k, d)
                 for i in range(len(self.ups))
                 for k, d in zip(resblock_kernel_sizes, resblock_dilation_sizes)
             ]
@@ -149,27 +147,26 @@ class GeneratorNSF(torch.nn.Module):
     def forward(self, x, f0, g: Optional[torch.Tensor] = None):
         har_source, _, _ = self.m_source(f0, self.upp)
         har_source = har_source.transpose(1, 2)
+
         x = self.conv_pre(x)
 
         if g is not None:
-            x = x + self.cond(g)
+            x += self.cond(g)
 
         for i, (ups, noise_convs) in enumerate(zip(self.ups, self.noise_convs)):
             x = torch.nn.functional.leaky_relu(x, self.lrelu_slope)
             x = ups(x)
-            x = x + noise_convs(har_source)
+            x += noise_convs(har_source)
 
             xs = sum(
-                [
-                    resblock(x)
-                    for j, resblock in enumerate(self.resblocks)
-                    if j in range(i * self.num_kernels, (i + 1) * self.num_kernels)
-                ]
+                self.resblocks[j](x)
+                for j in range(i * self.num_kernels, (i + 1) * self.num_kernels)
             )
             x = xs / self.num_kernels
 
         x = torch.nn.functional.leaky_relu(x)
         x = torch.tanh(self.conv_post(x))
+
         return x
 
     def remove_weight_norm(self):

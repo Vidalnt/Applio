@@ -1,18 +1,16 @@
 import math
 import torch
-import torch.nn.functional as F
-from torch.nn import Conv1d
 from torch.nn.utils import remove_weight_norm
 from torch.nn.utils.parametrizations import weight_norm
+from typing import Optional
+import torch.nn.functional as F
 from torch.nn.utils.parametrize import remove_parametrizations
 from rvc.lib.algorithm.generators import SineGenerator
 from rvc.lib.algorithm.commons import init_weights
 from dataclasses import dataclass
 from einops import rearrange
-from typing import Optional
 from vector_quantize_pytorch import GroupedResidualFSQ
-
-LRELU_SLOPE = 0.1
+from rvc.lib.algorithm.residuals import LRELU_SLOPE
 
 
 def drop_path(
@@ -23,7 +21,9 @@ def drop_path(
     if drop_prob == 0.0 or not training:
         return x
     keep_prob = 1 - drop_prob
-    shape = (x.shape[0],) + (1,) * (x.ndim - 1)
+    shape = (x.shape[0],) + (1,) * (
+        x.ndim - 1
+    )  # work with diff dim tensors, not just 2D ConvNets
     random_tensor = x.new_empty(shape).bernoulli_(keep_prob)
     if keep_prob > 0.0 and scale_by_keep:
         random_tensor.div_(keep_prob)
@@ -38,10 +38,10 @@ class DropPath(torch.nn.Module):
         self.drop_prob = drop_prob
         self.scale_by_keep = scale_by_keep
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x):
         return drop_path(x, self.drop_prob, self.training, self.scale_by_keep)
 
-    def extra_repr(self) -> str:
+    def extra_repr(self):
         return f"drop_prob={round(self.drop_prob,3):0.3f}"
 
 
@@ -59,7 +59,7 @@ class LayerNorm(torch.nn.Module):
             raise NotImplementedError
         self.normalized_shape = (normalized_shape,)
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x):
         if self.data_format == "channels_last":
             return F.layer_norm(
                 x, self.normalized_shape, self.weight, self.bias, self.eps
@@ -86,15 +86,17 @@ class ConvNeXtBlock(torch.nn.Module):
     ):
         super().__init__()
 
-        self.dwconv = Conv1d(
+        self.dwconv = torch.nn.Conv1d(
             dim,
             dim,
             kernel_size=kernel_size,
             padding=int(dilation * (kernel_size - 1) / 2),
             groups=dim,
-        )
+        )  # depthwise conv
         self.norm = LayerNorm(dim, eps=1e-6)
-        self.pwconv1 = torch.nn.Linear(dim, int(mlp_ratio * dim))
+        self.pwconv1 = torch.nn.Linear(
+            dim, int(mlp_ratio * dim)
+        )  # pointwise/1x1 convs, implemented with linear layers
         self.act = torch.nn.GELU()
         self.pwconv2 = torch.nn.Linear(int(mlp_ratio * dim), dim)
         self.gamma = (
@@ -104,11 +106,11 @@ class ConvNeXtBlock(torch.nn.Module):
         )
         self.drop_path = DropPath(drop_path) if drop_path > 0.0 else torch.nn.Identity()
 
-    def forward(self, x: torch.Tensor, apply_residual: bool = True) -> torch.Tensor:
+    def forward(self, x, apply_residual: bool = True):
         input = x
 
         x = self.dwconv(x)
-        x = x.permute(0, 2, 1)
+        x = x.permute(0, 2, 1)  # (N, C, L) -> (N, L, C)
         x = self.norm(x)
         x = self.pwconv1(x)
         x = self.act(x)
@@ -117,7 +119,7 @@ class ConvNeXtBlock(torch.nn.Module):
         if self.gamma is not None:
             x = self.gamma * x
 
-        x = x.permute(0, 2, 1)
+        x = x.permute(0, 2, 1)  # (N, L, C) -> (N, C, L)
         x = self.drop_path(x)
 
         if apply_residual:
@@ -141,7 +143,7 @@ class ConvNeXtEncoder(torch.nn.Module):
 
         self.downsample_layers = torch.nn.ModuleList()
         stem = torch.nn.Sequential(
-            Conv1d(
+            torch.nn.Conv1d(
                 input_channels,
                 dims[0],
                 kernel_size=kernel_size,
@@ -155,7 +157,7 @@ class ConvNeXtEncoder(torch.nn.Module):
         for i in range(len(depths) - 1):
             mid_layer = torch.nn.Sequential(
                 LayerNorm(dims[i], eps=1e-6, data_format="channels_first"),
-                Conv1d(dims[i], dims[i + 1], kernel_size=1),
+                torch.nn.Conv1d(dims[i], dims[i + 1], kernel_size=1),
             )
             self.downsample_layers.append(mid_layer)
 
@@ -182,11 +184,14 @@ class ConvNeXtEncoder(torch.nn.Module):
         self.apply(self._init_weights)
 
     def _init_weights(self, m):
-        if isinstance(m, (Conv1d, torch.nn.Linear)):
+        if isinstance(m, (torch.nn.Conv1d, torch.nn.Linear)):
             torch.nn.init.trunc_normal_(m.weight, std=0.02)
             torch.nn.init.constant_(m.bias, 0)
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(
+        self,
+        x: torch.Tensor,
+    ) -> torch.Tensor:
         for i in range(len(self.downsample_layers)):
             x = self.downsample_layers[i](x)
             x = self.stages[i](x)
@@ -207,9 +212,9 @@ class DownsampleFiniteScalarQuantize(torch.nn.Module):
         input_dim: int = 512,
         n_codebooks: int = 1,
         n_groups: int = 1,
-        levels: tuple[int] = (8, 5, 5, 5),
+        levels: tuple[int] = (8, 5, 5, 5),  # Approximate 2**10
         downsample_factor: tuple[int] = (2, 2),
-        downsample_dims: Optional[tuple[int]] = None,
+        downsample_dims: tuple[int] | None = None,
     ):
         super().__init__()
 
@@ -231,7 +236,7 @@ class DownsampleFiniteScalarQuantize(torch.nn.Module):
         self.downsample = torch.nn.Sequential(
             *[
                 torch.nn.Sequential(
-                    Conv1d(
+                    torch.nn.Conv1d(
                         all_dims[idx],
                         all_dims[idx + 1],
                         kernel_size=factor,
@@ -261,11 +266,11 @@ class DownsampleFiniteScalarQuantize(torch.nn.Module):
         self.apply(self._init_weights)
 
     def _init_weights(self, m):
-        if isinstance(m, (Conv1d, torch.nn.Linear)):
+        if isinstance(m, (torch.nn.Conv1d, torch.nn.Linear)):
             torch.nn.init.trunc_normal_(m.weight, std=0.02)
             torch.nn.init.constant_(m.bias, 0)
 
-    def forward(self, z: torch.Tensor) -> FSQResult:
+    def forward(self, z) -> FSQResult:
         original_shape = z.shape
         z = self.downsample(z)
         quantized, indices = self.residual_fsq(z.mT)
@@ -276,6 +281,7 @@ class DownsampleFiniteScalarQuantize(torch.nn.Module):
         )
         result.z = self.upsample(result.z)
 
+        # Pad or crop z to match original shape
         diff = original_shape[-1] - result.z.shape[-1]
         left = diff // 2
         right = diff - left
@@ -287,13 +293,13 @@ class DownsampleFiniteScalarQuantize(torch.nn.Module):
 
         return result
 
-    def encode(self, z: torch.Tensor) -> torch.Tensor:
+    def encode(self, z):
         z = self.downsample(z)
         _, indices = self.residual_fsq(z.mT)
         indices = rearrange(indices, "g b l r -> b (g r) l")
         return indices
 
-    def decode(self, indices: torch.Tensor) -> torch.Tensor:
+    def decode(self, indices: torch.Tensor):
         indices = rearrange(indices, "b (g r) l -> g b l r", g=self.residual_fsq.groups)
         z_q = self.residual_fsq.get_output_from_indices(indices)
         z_q = self.upsample(z_q.mT)
@@ -301,15 +307,15 @@ class DownsampleFiniteScalarQuantize(torch.nn.Module):
 
 
 
-def get_padding(kernel_size: int, dilation: int = 1) -> int:
+def get_padding(kernel_size, dilation=1):
     return (kernel_size * dilation - dilation) // 2
 
 
 class ResBlock1(torch.nn.Module):
-    def __init__(self, channels: int, kernel_size: int = 3, dilation: tuple[int] = (1, 3, 5)):
+    def __init__(self, channels, kernel_size=3, dilation=(1, 3, 5)):
         super().__init__()
 
-        self.convs1 = nn.ModuleList(
+        self.convs1 = torch.nn.ModuleList(
             [
                 weight_norm(
                     Conv1d(
@@ -345,7 +351,7 @@ class ResBlock1(torch.nn.Module):
         )
         self.convs1.apply(init_weights)
 
-        self.convs2 = nn.ModuleList(
+        self.convs2 = torch.nn.ModuleList(
             [
                 weight_norm(
                     Conv1d(
@@ -381,6 +387,7 @@ class ResBlock1(torch.nn.Module):
         )
         self.convs2.apply(init_weights)
 
+    def forward(self, x):
         for c1, c2 in zip(self.convs1, self.convs2):
             xt = F.silu(x)
             xt = c1(xt)
@@ -396,7 +403,7 @@ class ResBlock1(torch.nn.Module):
             remove_parametrizations(conv)
 
 
-class ParralelBlock(nn.Module):
+class ParralelBlock(torch.nn.Module):
     def __init__(
         self,
         channels: int,
@@ -407,12 +414,11 @@ class ParralelBlock(nn.Module):
 
         assert len(kernel_sizes) == len(dilation_sizes)
 
-        self.blocks = nn.ModuleList()
+        self.blocks = torch.nn.ModuleList()
         for k, d in zip(kernel_sizes, dilation_sizes):
             self.blocks.append(ResBlock1(channels, k, d))
 
     def forward(self, x):
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
         return torch.stack([block(x) for block in self.blocks], dim=0).mean(dim=0)
 
     def remove_parametrizations(self):
@@ -442,7 +448,7 @@ class SourceModuleHnNSF(torch.nn.Module):
         voiced_threshod: float = 0,
         is_half: bool = True,
     ):
-        super().__init__()
+        super(SourceModuleHnNSF, self).__init__()
 
         self.sine_amp = sine_amp
         self.noise_std = add_noise_std
@@ -454,7 +460,7 @@ class SourceModuleHnNSF(torch.nn.Module):
         self.l_linear = torch.nn.Linear(harmonic_num + 1, 1)
         self.l_tanh = torch.nn.Tanh()
 
-    def forward(self, x: torch.Tensor, upsample_factor: int = 1) -> tuple[torch.Tensor, None, None]:
+    def forward(self, x: torch.Tensor, upsample_factor: int = 1):
         sine_wavs, uv, _ = self.l_sin_gen(x, upsample_factor)
         sine_wavs = sine_wavs.to(dtype=self.l_linear.weight.dtype)
         sine_merge = self.l_tanh(self.l_linear(sine_wavs))
@@ -519,7 +525,7 @@ class FireFlyVQGAN(torch.nn.Module):
             )
         else:
             self.conv_pre = weight_norm(
-                Conv1d(
+                torch.nn.Conv1d(
                     initial_channel, upsample_initial_channel, 7, 1, padding=3
                 )
             )
@@ -537,13 +543,6 @@ class FireFlyVQGAN(torch.nn.Module):
         ]
 
         for i, (u, k) in enumerate(zip(upsample_rates, upsample_kernel_sizes)):
-            # handling odd upsampling rates
-            if u % 2 == 0:
-                # old method
-                padding = (k - u) // 2
-            else:
-                padding = u // 2 + u % 2
-                
             self.ups.append(
                 weight_norm(
                     torch.nn.ConvTranspose1d(
@@ -551,23 +550,18 @@ class FireFlyVQGAN(torch.nn.Module):
                         channels[i],
                         k,
                         u,
-                        padding=padding,
-                        output_padding=u % 2,
+                        padding=(k - u) // 2,
                     )
                 )
             )
-            
-            stride = stride_f0s[i]
-            kernel = (1 if stride == 1 else stride * 2 - stride % 2)
-            padding = (0 if stride == 1 else (kernel - stride) // 2)
-            
+
             self.noise_convs.append(
-                Conv1d(
+                torch.nn.Conv1d(
                     1,
                     channels[i],
-                    kernel_size=kernel,
-                    stride=stride,
-                    padding=padding,
+                    kernel_size=(stride_f0s[i] * 2 if stride_f0s[i] > 1 else 1),
+                    stride=stride_f0s[i],
+                    padding=(stride_f0s[i] // 2 if stride_f0s[i] > 1 else 0),
                 )
             )
 
@@ -581,14 +575,14 @@ class FireFlyVQGAN(torch.nn.Module):
         )
 
         self.conv_post = weight_norm(
-            Conv1d(channels[-1], 1, 7, 1, padding=3, bias=False)
+            torch.nn.Conv1d(channels[-1], 1, 7, 1, padding=3, bias=False)
         )
         self.ups.apply(init_weights)
         self.conv_post.apply(init_weights)
 
         if gin_channels != 0:
             self.cond = weight_norm(
-                Conv1d(gin_channels, upsample_initial_channel, 1)
+                torch.nn.Conv1d(gin_channels, upsample_initial_channel, 1)
             )
 
         self.use_vq = use_vq
@@ -603,7 +597,7 @@ class FireFlyVQGAN(torch.nn.Module):
         self.upp = math.prod(upsample_rates)
         self.lrelu_slope = LRELU_SLOPE
 
-    def forward(self, x: torch.Tensor, f0: torch.Tensor, g: Optional[torch.Tensor] = None) -> torch.Tensor:
+    def forward(self, x, f0, g: Optional[torch.Tensor] = None):
         har_source, _, _ = self.m_source(f0, self.upp)
         har_source = har_source.transpose(1, 2)
         if self.use_convnext_encoder:

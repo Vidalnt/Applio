@@ -1,79 +1,65 @@
 import math
 import torch
+import torch.nn.functional as F
+from torch.nn import Conv1d
 from torch.nn.utils import remove_weight_norm
 from torch.nn.utils.parametrizations import weight_norm
-from typing import Optional
-import torch.nn.functional as F
-from torch import nn
 from torch.nn.utils.parametrize import remove_parametrizations
 from rvc.lib.algorithm.generators import SineGenerator
-from torch.nn import Conv1d
 from rvc.lib.algorithm.commons import init_weights
 from dataclasses import dataclass
 from einops import rearrange
+from typing import Optional
 from vector_quantize_pytorch import GroupedResidualFSQ
 
 LRELU_SLOPE = 0.1
 
 
 def drop_path(
-    x, drop_prob: float = 0.0, training: bool = False, scale_by_keep: bool = True
-):
-    """Drop paths (Stochastic Depth) per sample (when applied in main path of residual blocks).
-
-    This is the same as the DropConnect impl I created for EfficientNet, etc networks, however,
-    the original name is misleading as 'Drop Connect' is a different form of dropout in a separate paper...
-    See discussion: https://github.com/tensorflow/tpu/issues/494#issuecomment-532968956 ... I've opted for
-    changing the layer and argument names to 'drop path' rather than mix DropConnect as a layer name and use
-    'survival rate' as the argument.
-
-    """  # noqa: E501
-
+    x: torch.Tensor, drop_prob: float = 0.0, training: bool = False, scale_by_keep: bool = True
+) -> torch.Tensor:
+    """Drop paths (Stochastic Depth) per sample.
+    """
     if drop_prob == 0.0 or not training:
         return x
     keep_prob = 1 - drop_prob
-    shape = (x.shape[0],) + (1,) * (
-        x.ndim - 1
-    )  # work with diff dim tensors, not just 2D ConvNets
+    shape = (x.shape[0],) + (1,) * (x.ndim - 1)
     random_tensor = x.new_empty(shape).bernoulli_(keep_prob)
     if keep_prob > 0.0 and scale_by_keep:
         random_tensor.div_(keep_prob)
     return x * random_tensor
 
 
-class DropPath(nn.Module):
-    """Drop paths (Stochastic Depth) per sample  (when applied in main path of residual blocks)."""  # noqa: E501
+class DropPath(torch.nn.Module):
+    """Drop paths (Stochastic Depth) per sample."""
 
     def __init__(self, drop_prob: float = 0.0, scale_by_keep: bool = True):
         super(DropPath, self).__init__()
         self.drop_prob = drop_prob
         self.scale_by_keep = scale_by_keep
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         return drop_path(x, self.drop_prob, self.training, self.scale_by_keep)
 
-    def extra_repr(self):
+    def extra_repr(self) -> str:
         return f"drop_prob={round(self.drop_prob,3):0.3f}"
 
 
-class LayerNorm(nn.Module):
+class LayerNorm(torch.nn.Module):
     r"""LayerNorm that supports two data formats: channels_last (default) or channels_first.
-    The ordering of the dimensions in the inputs. channels_last corresponds to inputs with
-    shape (batch_size, height, width, channels) while channels_first corresponds to inputs
-    with shape (batch_size, channels, height, width).
-    """  # noqa: E501
+    """
 
     def __init__(self, normalized_shape, eps=1e-6, data_format="channels_last"):
         super().__init__()
-        self.weight = nn.Parameter(torch.ones(normalized_shape))
-        self.bias = nn.Parameter(torch.zeros(normalized_shape))
+        self.weight = torch.nn.Parameter(torch.ones(normalized_shape))
+        self.bias = torch.nn.Parameter(torch.zeros(normalized_shape))
         self.eps = eps
         self.data_format = data_format
         if self.data_format not in ["channels_last", "channels_first"]:
             raise NotImplementedError
         self.normalized_shape = (normalized_shape,)
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         if self.data_format == "channels_last":
             return F.layer_norm(
                 x, self.normalized_shape, self.weight, self.bias, self.eps
@@ -86,21 +72,8 @@ class LayerNorm(nn.Module):
             return x
 
 
-# ConvNeXt Block copied from https://github.com/fishaudio/fish-diffusion/blob/main/fish_diffusion/modules/convnext.py
-class ConvNeXtBlock(nn.Module):
-    r"""ConvNeXt Block. There are two equivalent implementations:
-    (1) DwConv -> LayerNorm (channels_first) -> 1x1 Conv -> GELU -> 1x1 Conv; all in (N, C, H, W)
-    (2) DwConv -> Permute to (N, H, W, C); LayerNorm (channels_last) -> Linear -> GELU -> Linear; Permute back
-    We use (2) as we find it slightly faster in PyTorch
-
-    Args:
-        dim (int): Number of input channels.
-        drop_path (float): Stochastic depth rate. Default: 0.0
-        layer_scale_init_value (float): Init value for Layer Scale. Default: 1e-6.
-        mlp_ratio (float): Ratio of mlp hidden dim to embedding dim. Default: 4.0.
-        kernel_size (int): Kernel size for depthwise conv. Default: 7.
-        dilation (int): Dilation for depthwise conv. Default: 1.
-    """  # noqa: E501
+class ConvNeXtBlock(torch.nn.Module):
+    r"""ConvNeXt Block."""
 
     def __init__(
         self,
@@ -113,31 +86,29 @@ class ConvNeXtBlock(nn.Module):
     ):
         super().__init__()
 
-        self.dwconv = nn.Conv1d(
+        self.dwconv = Conv1d(
             dim,
             dim,
             kernel_size=kernel_size,
             padding=int(dilation * (kernel_size - 1) / 2),
             groups=dim,
-        )  # depthwise conv
+        )
         self.norm = LayerNorm(dim, eps=1e-6)
-        self.pwconv1 = nn.Linear(
-            dim, int(mlp_ratio * dim)
-        )  # pointwise/1x1 convs, implemented with linear layers
-        self.act = nn.GELU()
-        self.pwconv2 = nn.Linear(int(mlp_ratio * dim), dim)
+        self.pwconv1 = torch.nn.Linear(dim, int(mlp_ratio * dim))
+        self.act = torch.nn.GELU()
+        self.pwconv2 = torch.nn.Linear(int(mlp_ratio * dim), dim)
         self.gamma = (
-            nn.Parameter(layer_scale_init_value * torch.ones((dim)), requires_grad=True)
+            torch.nn.Parameter(layer_scale_init_value * torch.ones((dim)), requires_grad=True)
             if layer_scale_init_value > 0
             else None
         )
-        self.drop_path = DropPath(drop_path) if drop_path > 0.0 else nn.Identity()
+        self.drop_path = DropPath(drop_path) if drop_path > 0.0 else torch.nn.Identity()
 
-    def forward(self, x, apply_residual: bool = True):
+    def forward(self, x: torch.Tensor, apply_residual: bool = True) -> torch.Tensor:
         input = x
 
         x = self.dwconv(x)
-        x = x.permute(0, 2, 1)  # (N, C, L) -> (N, L, C)
+        x = x.permute(0, 2, 1)
         x = self.norm(x)
         x = self.pwconv1(x)
         x = self.act(x)
@@ -146,7 +117,7 @@ class ConvNeXtBlock(nn.Module):
         if self.gamma is not None:
             x = self.gamma * x
 
-        x = x.permute(0, 2, 1)  # (N, L, C) -> (N, C, L)
+        x = x.permute(0, 2, 1)
         x = self.drop_path(x)
 
         if apply_residual:
@@ -155,7 +126,7 @@ class ConvNeXtBlock(nn.Module):
         return x
 
 
-class ConvNeXtEncoder(nn.Module):
+class ConvNeXtEncoder(torch.nn.Module):
     def __init__(
         self,
         input_channels: int = 3,
@@ -168,9 +139,9 @@ class ConvNeXtEncoder(nn.Module):
         super().__init__()
         assert len(depths) == len(dims)
 
-        self.downsample_layers = nn.ModuleList()
-        stem = nn.Sequential(
-            nn.Conv1d(
+        self.downsample_layers = torch.nn.ModuleList()
+        stem = torch.nn.Sequential(
+            Conv1d(
                 input_channels,
                 dims[0],
                 kernel_size=kernel_size,
@@ -182,18 +153,18 @@ class ConvNeXtEncoder(nn.Module):
         self.downsample_layers.append(stem)
 
         for i in range(len(depths) - 1):
-            mid_layer = nn.Sequential(
+            mid_layer = torch.nn.Sequential(
                 LayerNorm(dims[i], eps=1e-6, data_format="channels_first"),
-                nn.Conv1d(dims[i], dims[i + 1], kernel_size=1),
+                Conv1d(dims[i], dims[i + 1], kernel_size=1),
             )
             self.downsample_layers.append(mid_layer)
 
-        self.stages = nn.ModuleList()
+        self.stages = torch.nn.ModuleList()
         dp_rates = [x.item() for x in torch.linspace(0, drop_path_rate, sum(depths))]
 
         cur = 0
         for i in range(len(depths)):
-            stage = nn.Sequential(
+            stage = torch.nn.Sequential(
                 *[
                     ConvNeXtBlock(
                         dim=dims[i],
@@ -211,14 +182,11 @@ class ConvNeXtEncoder(nn.Module):
         self.apply(self._init_weights)
 
     def _init_weights(self, m):
-        if isinstance(m, (nn.Conv1d, nn.Linear)):
-            nn.init.trunc_normal_(m.weight, std=0.02)
-            nn.init.constant_(m.bias, 0)
+        if isinstance(m, (Conv1d, torch.nn.Linear)):
+            torch.nn.init.trunc_normal_(m.weight, std=0.02)
+            torch.nn.init.constant_(m.bias, 0)
 
-    def forward(
-        self,
-        x: torch.Tensor,
-    ) -> torch.Tensor:
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         for i in range(len(self.downsample_layers)):
             x = self.downsample_layers[i](x)
             x = self.stages[i](x)
@@ -233,15 +201,15 @@ class FSQResult:
     latents: torch.Tensor
 
 
-class DownsampleFiniteScalarQuantize(nn.Module):
+class DownsampleFiniteScalarQuantize(torch.nn.Module):
     def __init__(
         self,
         input_dim: int = 512,
         n_codebooks: int = 1,
         n_groups: int = 1,
-        levels: tuple[int] = (8, 5, 5, 5),  # Approximate 2**10
+        levels: tuple[int] = (8, 5, 5, 5),
         downsample_factor: tuple[int] = (2, 2),
-        downsample_dims: tuple[int] | None = None,
+        downsample_dims: Optional[tuple[int]] = None,
     ):
         super().__init__()
 
@@ -260,10 +228,10 @@ class DownsampleFiniteScalarQuantize(nn.Module):
         self.downsample_factor = downsample_factor
         self.downsample_dims = downsample_dims
 
-        self.downsample = nn.Sequential(
+        self.downsample = torch.nn.Sequential(
             *[
-                nn.Sequential(
-                    nn.Conv1d(
+                torch.nn.Sequential(
+                    Conv1d(
                         all_dims[idx],
                         all_dims[idx + 1],
                         kernel_size=factor,
@@ -275,10 +243,10 @@ class DownsampleFiniteScalarQuantize(nn.Module):
             ]
         )
 
-        self.upsample = nn.Sequential(
+        self.upsample = torch.nn.Sequential(
             *[
-                nn.Sequential(
-                    nn.ConvTranspose1d(
+                torch.nn.Sequential(
+                    torch.nn.ConvTranspose1d(
                         all_dims[idx + 1],
                         all_dims[idx],
                         kernel_size=factor,
@@ -293,11 +261,11 @@ class DownsampleFiniteScalarQuantize(nn.Module):
         self.apply(self._init_weights)
 
     def _init_weights(self, m):
-        if isinstance(m, (nn.Conv1d, nn.Linear)):
-            nn.init.trunc_normal_(m.weight, std=0.02)
-            nn.init.constant_(m.bias, 0)
+        if isinstance(m, (Conv1d, torch.nn.Linear)):
+            torch.nn.init.trunc_normal_(m.weight, std=0.02)
+            torch.nn.init.constant_(m.bias, 0)
 
-    def forward(self, z) -> FSQResult:
+    def forward(self, z: torch.Tensor) -> FSQResult:
         original_shape = z.shape
         z = self.downsample(z)
         quantized, indices = self.residual_fsq(z.mT)
@@ -308,7 +276,6 @@ class DownsampleFiniteScalarQuantize(nn.Module):
         )
         result.z = self.upsample(result.z)
 
-        # Pad or crop z to match original shape
         diff = original_shape[-1] - result.z.shape[-1]
         left = diff // 2
         right = diff - left
@@ -320,30 +287,26 @@ class DownsampleFiniteScalarQuantize(nn.Module):
 
         return result
 
-    def encode(self, z):
+    def encode(self, z: torch.Tensor) -> torch.Tensor:
         z = self.downsample(z)
         _, indices = self.residual_fsq(z.mT)
         indices = rearrange(indices, "g b l r -> b (g r) l")
         return indices
 
-    def decode(self, indices: torch.Tensor):
+    def decode(self, indices: torch.Tensor) -> torch.Tensor:
         indices = rearrange(indices, "b (g r) l -> g b l r", g=self.residual_fsq.groups)
         z_q = self.residual_fsq.get_output_from_indices(indices)
         z_q = self.upsample(z_q.mT)
         return z_q
 
-    # def from_latents(self, latents: torch.Tensor):
-    #     z_q, z_p, codes = super().from_latents(latents)
-    #     z_q = self.upsample(z_q)
-    #     return z_q, z_p, codes
 
 
-def get_padding(kernel_size, dilation=1):
+def get_padding(kernel_size: int, dilation: int = 1) -> int:
     return (kernel_size * dilation - dilation) // 2
 
 
 class ResBlock1(torch.nn.Module):
-    def __init__(self, channels, kernel_size=3, dilation=(1, 3, 5)):
+    def __init__(self, channels: int, kernel_size: int = 3, dilation: tuple[int] = (1, 3, 5)):
         super().__init__()
 
         self.convs1 = nn.ModuleList(
@@ -418,7 +381,6 @@ class ResBlock1(torch.nn.Module):
         )
         self.convs2.apply(init_weights)
 
-    def forward(self, x):
         for c1, c2 in zip(self.convs1, self.convs2):
             xt = F.silu(x)
             xt = c1(xt)
@@ -450,6 +412,7 @@ class ParralelBlock(nn.Module):
             self.blocks.append(ResBlock1(channels, k, d))
 
     def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         return torch.stack([block(x) for block in self.blocks], dim=0).mean(dim=0)
 
     def remove_parametrizations(self):
@@ -479,7 +442,7 @@ class SourceModuleHnNSF(torch.nn.Module):
         voiced_threshod: float = 0,
         is_half: bool = True,
     ):
-        super(SourceModuleHnNSF, self).__init__()
+        super().__init__()
 
         self.sine_amp = sine_amp
         self.noise_std = add_noise_std
@@ -491,7 +454,7 @@ class SourceModuleHnNSF(torch.nn.Module):
         self.l_linear = torch.nn.Linear(harmonic_num + 1, 1)
         self.l_tanh = torch.nn.Tanh()
 
-    def forward(self, x: torch.Tensor, upsample_factor: int = 1):
+    def forward(self, x: torch.Tensor, upsample_factor: int = 1) -> tuple[torch.Tensor, None, None]:
         sine_wavs, uv, _ = self.l_sin_gen(x, upsample_factor)
         sine_wavs = sine_wavs.to(dtype=self.l_linear.weight.dtype)
         sine_merge = self.l_tanh(self.l_linear(sine_wavs))
@@ -556,7 +519,7 @@ class FireFlyVQGAN(torch.nn.Module):
             )
         else:
             self.conv_pre = weight_norm(
-                torch.nn.Conv1d(
+                Conv1d(
                     initial_channel, upsample_initial_channel, 7, 1, padding=3
                 )
             )
@@ -574,6 +537,13 @@ class FireFlyVQGAN(torch.nn.Module):
         ]
 
         for i, (u, k) in enumerate(zip(upsample_rates, upsample_kernel_sizes)):
+            # handling odd upsampling rates
+            if u % 2 == 0:
+                # old method
+                padding = (k - u) // 2
+            else:
+                padding = u // 2 + u % 2
+                
             self.ups.append(
                 weight_norm(
                     torch.nn.ConvTranspose1d(
@@ -581,18 +551,23 @@ class FireFlyVQGAN(torch.nn.Module):
                         channels[i],
                         k,
                         u,
-                        padding=(k - u) // 2,
+                        padding=padding,
+                        output_padding=u % 2,
                     )
                 )
             )
-
+            
+            stride = stride_f0s[i]
+            kernel = (1 if stride == 1 else stride * 2 - stride % 2)
+            padding = (0 if stride == 1 else (kernel - stride) // 2)
+            
             self.noise_convs.append(
-                torch.nn.Conv1d(
+                Conv1d(
                     1,
                     channels[i],
-                    kernel_size=(stride_f0s[i] * 2 if stride_f0s[i] > 1 else 1),
-                    stride=stride_f0s[i],
-                    padding=(stride_f0s[i] // 2 if stride_f0s[i] > 1 else 0),
+                    kernel_size=kernel,
+                    stride=stride,
+                    padding=padding,
                 )
             )
 
@@ -606,14 +581,14 @@ class FireFlyVQGAN(torch.nn.Module):
         )
 
         self.conv_post = weight_norm(
-            torch.nn.Conv1d(channels[-1], 1, 7, 1, padding=3, bias=False)
+            Conv1d(channels[-1], 1, 7, 1, padding=3, bias=False)
         )
         self.ups.apply(init_weights)
         self.conv_post.apply(init_weights)
 
         if gin_channels != 0:
             self.cond = weight_norm(
-                torch.nn.Conv1d(gin_channels, upsample_initial_channel, 1)
+                Conv1d(gin_channels, upsample_initial_channel, 1)
             )
 
         self.use_vq = use_vq
@@ -628,7 +603,7 @@ class FireFlyVQGAN(torch.nn.Module):
         self.upp = math.prod(upsample_rates)
         self.lrelu_slope = LRELU_SLOPE
 
-    def forward(self, x, f0, g: Optional[torch.Tensor] = None):
+    def forward(self, x: torch.Tensor, f0: torch.Tensor, g: Optional[torch.Tensor] = None) -> torch.Tensor:
         har_source, _, _ = self.m_source(f0, self.upp)
         har_source = har_source.transpose(1, 2)
         if self.use_convnext_encoder:

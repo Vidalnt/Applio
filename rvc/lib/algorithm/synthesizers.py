@@ -1,5 +1,9 @@
 import torch
 from typing import Optional
+from rvc.lib.algorithm.hifigan import HiFiGAN
+from rvc.lib.algorithm.firefly import FireFlyVQGAN
+from rvc.lib.algorithm.vocos import VocosGAN
+from rvc.lib.algorithm.refinegan import RefineGAN
 from rvc.lib.algorithm.nsf import GeneratorNSF
 from rvc.lib.algorithm.generators import Generator
 from rvc.lib.algorithm.commons import slice_segments, rand_slice_segments
@@ -57,12 +61,14 @@ class Synthesizer(torch.nn.Module):
         sr: int,
         use_f0: bool,
         text_enc_hidden_dim: int = 768,
+        vocoder: str = "HiFi-GAN",
+        randomized: bool = True,
         **kwargs,
     ):
         super().__init__()
         self.segment_size = segment_size
-        self.gin_channels = gin_channels
         self.use_f0 = use_f0
+        self.randomized = randomized
 
         self.enc_p = TextEncoder(
             inter_channels,
@@ -75,30 +81,85 @@ class Synthesizer(torch.nn.Module):
             text_enc_hidden_dim,
             f0=use_f0,
         )
-
+        print(f"Using {vocoder} vocoder")
         if use_f0:
-            self.dec = GeneratorNSF(
-                inter_channels,
-                resblock_kernel_sizes,
-                resblock_dilation_sizes,
-                upsample_rates,
-                upsample_initial_channel,
-                upsample_kernel_sizes,
-                gin_channels=gin_channels,
-                sr=sr,
-                is_half=kwargs["is_half"],
-            )
+            if vocoder == "MRF HiFi-GAN":
+                self.dec = HiFiGAN(
+                    in_channel=inter_channels,
+                    upsample_initial_channel=upsample_initial_channel,
+                    upsample_rates=upsample_rates,
+                    upsample_kernel_sizes=upsample_kernel_sizes,
+                    resblock_kernel_sizes=resblock_kernel_sizes,
+                    resblock_dilations=resblock_dilation_sizes,
+                    gin_channels=gin_channels,
+                    sample_rate=sr,
+                    harmonic_num=8,
+                )
+            elif vocoder == "RefineGAN":
+                self.dec = RefineGAN(
+                    sample_rate=sr,
+                    downsample_rates=upsample_rates[::-1],
+                    upsample_rates=upsample_rates,
+                    start_channels=16,
+                    num_mels=inter_channels,
+                )
+            elif vocoder == "FireFlyVQGAN":
+                self.dec = FireFlyVQGAN(
+                    inter_channels,
+                    resblock_kernel_sizes,
+                    resblock_dilation_sizes,
+                    upsample_rates,
+                    upsample_initial_channel,
+                    upsample_kernel_sizes,
+                    gin_channels=gin_channels,
+                    sr=sr,
+                    is_half=kwargs["is_half"],
+                )
+            elif vocoder == "VocosGAN":
+                self.dec = VocosGAN(
+                    in_channel=80,
+                    channel=384,
+                    h_channel=1152,
+                    out_channel=1026,
+                    num_layers=8,
+                    sample_rate=sr,
+                    gin_channels=gin_channels,
+                    istft_config={
+                        "n_fft": 1024,
+                        "hop_length": 256,
+                        "win_length": 1024,
+                        "center": True,
+                    },
+                )
+            else:
+                self.dec = GeneratorNSF(
+                    inter_channels,
+                    resblock_kernel_sizes,
+                    resblock_dilation_sizes,
+                    upsample_rates,
+                    upsample_initial_channel,
+                    upsample_kernel_sizes,
+                    gin_channels=gin_channels,
+                    sr=sr,
+                    is_half=kwargs["is_half"],
+                )
         else:
-            self.dec = Generator(
-                inter_channels,
-                resblock_kernel_sizes,
-                resblock_dilation_sizes,
-                upsample_rates,
-                upsample_initial_channel,
-                upsample_kernel_sizes,
-                gin_channels=gin_channels,
-            )
-
+            if vocoder == "MRF HiFi-GAN":
+                print("MRF HiFi-GAN does not support training without pitch guidance.")
+                self.dec = None
+            elif vocoder == "RefineGAN":
+                print("RefineGAN does not support training without pitch guidance.")
+                self.dec = None
+            else:
+                self.dec = Generator(
+                    inter_channels,
+                    resblock_kernel_sizes,
+                    resblock_dilation_sizes,
+                    upsample_rates,
+                    upsample_initial_channel,
+                    upsample_kernel_sizes,
+                    gin_channels=gin_channels,
+                )
         self.enc_q = PosteriorEncoder(
             spec_channels,
             inter_channels,
@@ -161,17 +222,26 @@ class Synthesizer(torch.nn.Module):
         if y is not None:
             z, m_q, logs_q, y_mask = self.enc_q(y, y_lengths, g=g)
             z_p = self.flow(z, y_mask, g=g)
-            z_slice, ids_slice = rand_slice_segments(z, y_lengths, self.segment_size)
-
-            if self.use_f0 and pitchf is not None:
-                pitchf = slice_segments(pitchf, ids_slice, self.segment_size, 2)
-                o = self.dec(z_slice, pitchf, g=g)
+            # regular old training method using random slices
+            if self.randomized:
+                z_slice, ids_slice = rand_slice_segments(
+                    z, y_lengths, self.segment_size
+                )
+                if self.use_f0:
+                    pitchf = slice_segments(pitchf, ids_slice, self.segment_size, 2)
+                    o = self.dec(z_slice, pitchf, g=g)
+                else:
+                    o = self.dec(z_slice, g=g)
+                return o, ids_slice, x_mask, y_mask, (z, z_p, m_p, logs_p, m_q, logs_q)
+            # future use for finetuning using the entire dataset each pass
             else:
-                o = self.dec(z_slice, g=g)
-
-            return o, ids_slice, x_mask, y_mask, (z, z_p, m_p, logs_p, m_q, logs_q)
-
-        return None, None, x_mask, None, (None, None, m_p, logs_p, None, None)
+                if self.use_f0:
+                    o = self.dec(z, pitchf, g=g)
+                else:
+                    o = self.dec(z, g=g)
+                return o, None, x_mask, y_mask, (z, z_p, m_p, logs_p, m_q, logs_q)
+        else:
+            return None, None, x_mask, None, (None, None, m_p, logs_p, None, None)
 
     @torch.jit.export
     def infer(

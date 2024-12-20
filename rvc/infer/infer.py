@@ -482,7 +482,7 @@ class VoiceConverter:
                 use_f0=self.use_f0,
                 text_enc_hidden_dim=self.text_enc_hidden_dim,
                 is_half=self.config.is_half,
-                vocoder=self.vocoder,
+                vocoder=self.vocoder
             )
             del self.net_g.enc_q
             self.net_g.load_state_dict(self.cpt["weight"], strict=False)

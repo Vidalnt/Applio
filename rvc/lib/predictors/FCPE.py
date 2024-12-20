@@ -141,7 +141,7 @@ class STFT:
 
         spec = torch.stft(
             y,
-            n_fft_new,
+            n_fft=n_fft_new,
             hop_length=hop_length_new,
             win_length=win_size_new,
             window=hann_window[keyshift_key],

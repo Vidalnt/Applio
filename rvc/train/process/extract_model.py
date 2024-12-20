@@ -33,6 +33,7 @@ def extract_model(
     version,
     hps,
     overtrain_info,
+    vocoder,
 ):
     try:
         print(f"Saved model '{model_dir}' (epoch {epoch} and step {step})")
@@ -105,6 +106,7 @@ def extract_model(
         opt["author"] = model_author
         opt["embedder_model"] = embedder_model
         opt["speakers_id"] = speakers_id
+        opt["vocoder"] = vocoder
 
         torch.save(opt, os.path.join(model_dir_path, pth_file))
 

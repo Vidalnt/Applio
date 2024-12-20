@@ -498,7 +498,7 @@ class FireFlyVQGAN(torch.nn.Module):
         vq_n_codebooks=1,
         vq_n_groups=1,
         vq_levels=[8, 5, 5, 5],
-        vq_downsample_factor=[2],
+        vq_downsample_factor=[2,2],
     ):
         super(FireFlyVQGAN, self).__init__()
 

@@ -131,7 +131,7 @@ jobs:
           token = os.getenv('HF_TOKEN')
           version = os.getenv('version')
           login(token)
-          repo_id = 'vidalnt/nothing'
+          repo_id = 'IAHispano/Applio'
           repo_file_path = 'Pnpur.tar.gz'
             
           upload_file(

@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.10.12"]
+        python-version: ["3.11.11"]
 
     steps:
       - uses: actions/checkout@v4
@@ -22,8 +22,8 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Download and extract pre-packaged dependencies
         run: |
-          wget https://huggingface.co/IAHispano/Applio/resolve/main/Enviroment/Colab/tmp_packages.tar.gz?download=true -O prepackaged.tar.gz
-          tar -xzf prepackaged.tar.gz -C /opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/
+          wget https://huggingface.co/vidalnt/nothing/resolve/main/Enviroment/Colab/tmp_packages.tar.gz?download=true -O prepackaged.tar.gz
+          tar -xzf prepackaged.tar.gz -C /opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/
       - name: Read version from config.json
         id: get-version
         run: |
@@ -47,7 +47,7 @@ jobs:
                               print(f'Skipping irrelevant nonexistent file {fname}: {str(e)}')
               print(f'Finished recording filesystem timestamps to {output_file}.')
           
-          scan_and_write(\"/opt/hostedtoolcache/Python/3.10.12/x64\", \"./usr_files.csv\")"
+          scan_and_write(\"/opt/hostedtoolcache/Python/3.11.11/x64\", \"./usr_files.csv\")"
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
@@ -70,7 +70,7 @@ jobs:
                               print(f'Skipping irrelevant nonexistent file {fname}: {str(e)}')
               print(f'Finished recording filesystem timestamps to {output_file}.')
           
-          scan_and_write(\"/opt/hostedtoolcache/Python/3.10.12/x64\", \"./usr_files_new.csv\")"
+          scan_and_write(\"/opt/hostedtoolcache/Python/3.11.11/x64\", \"./usr_files_new.csv\")"
       - name: Create TAR file
         run: |
           python -c "
@@ -106,12 +106,12 @@ jobs:
               return list(added_files) + list(changed_files)
 
           changed_files = compare_files('./usr_files.csv', './usr_files_new.csv')
-          base_dir = '/opt/hostedtoolcache/Python/3.10.12/x64/'
+          base_dir = '/opt/hostedtoolcache/Python/3.11.11/x64/'
           arc_base_dir = 'usr/local/'
           with tarfile.open('./Pnpur.tar.gz', 'w:gz') as new_tar:
               for file in tqdm(changed_files, desc='Compressing', unit='files'):
                   relative_path = os.path.relpath(file, base_dir)
-                  if 'python3.10' in relative_path:
+                  if 'python3.11' in relative_path:
                       if 'site-packages' not in relative_path:
                           continue
                       if 'site-packages' in relative_path:

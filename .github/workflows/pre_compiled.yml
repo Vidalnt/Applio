@@ -139,10 +139,6 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Download and extract pre-packaged dependencies
-        run: |
-          wget https://huggingface.co/IAHispano/Applio/resolve/main/Enviroment/Colab/tmp_packages.tar.gz?download=true -O prepackaged.tar.gz
-          tar -xzf prepackaged.tar.gz -C /opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/
       - name: Read version from config.json
         id: get-version
         run: |
@@ -150,16 +146,81 @@ jobs:
           echo "version=$version" >> $GITHUB_OUTPUT
       - name: Install dependencies
         run: |
-          sudo apt-get install -y pigz
           pip install uv
           uv venv .venv
           uv pip install -r requirements.txt
           uv pip install torch==2.3.1 torchvision==0.18.1 torchaudio==2.3.1 --upgrade --index-url https://download.pytorch.org/whl/cu121
           uv pip install numpy==1.23.5
-      - name: Tar the .venv directory
+      - name: Create TAR file
         run: |
-          tar --use-compress-program="pigz --best --recursive" -cvf Pnpur.tar.gz .venv
+          python -c "
+          import tarfile
+          import os
+          from tqdm import tqdm
+
+          def create_tar(base_path: str, ignore_list: list, tar_filename: str):
+            files_to_add = [
+            os.path.join(root, name)
+            for root, _, files in os.walk(base_path)
+            for name in files
+            if not any(ignore in os.path.join(root, name) for ignore in ignore_list)
+            ]
+            with tarfile.open(tar_filename, 'w:gz') as tar:
+              for file in tqdm(files_to_add, desc='Compressing', unit='file'):
+                try:
+                  tar.add(file)
+                except FileNotFoundError as e:
+                  print(f'Warning: File not found: {file}. Skipping. Error: {e}')
+          base_path = '/home/runner/work/Applio/Applio/.venv'
+          tar_filename = './Pnpur.tar.gz'
+          ignore_list = [
+          '.venv/CACHEDIR.TAG',
+          '.venv/pyvenv.cfg',
+          '.venv/.gitignore',
+          '.venv/bin/activate.fish',
+          '.venv/bin/activate_this.py',
+          '.venv/bin/deactivate.bat',
+          '.venv/bin/activate.nu',
+          '.venv/bin/python3',
+          '.venv/bin/activate.ps1',
+          '.venv/bin/pydoc.bat',
+          '.venv/bin/activate.csh',
+          '.venv/bin/python',
+          '.venv/bin/activate',
+          '.venv/bin/activate.bat',
+          '.venv/bin/python3.11',
+          '.venv/lib/python3.11',
+          '.venv/lib/python3.11/site-packages',
+          '.venv/lib/python3.11/site-packages/_virtualenv.pth',
+          '.venv/lib/python3.11/site-packages/_virtualenv.py'
+          ]
+          create_tar(base_path, ignore_list, tar_filename)
+          "
       - name: Log ZIP file size
         run: |
           ZIP_SIZE=$(du -m "Pnpur.tar.gz" | cut -f1)
           echo "ZIP file size is: $ZIP_SIZE MB"
+
+      - name: Upload Colab Env
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          version: ${{ steps.get-version.outputs.version }}
+        run: |
+          python -c "
+          import os
+          from huggingface_hub import login, upload_file
+            
+          token = os.getenv('HF_TOKEN')
+          version = os.getenv('version')
+          login(token)
+          repo_id = 'vidalnt/nothing'
+          repo_file_path = 'Pnpur.tar.gz'
+            
+          upload_file(
+          commit_message=f'{version}',
+          path_or_fileobj=repo_file_path,
+          path_in_repo=f'Enviroment/Colab/{repo_file_path}',
+          repo_id=repo_id,
+          token=token)
+          "
+

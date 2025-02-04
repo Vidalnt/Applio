@@ -204,7 +204,9 @@ def create_folder_and_move_files(folder_name, bin_file, config_file):
     if bin_file:
         shutil.copy(bin_file, os.path.join(target_folder, os.path.basename(bin_file)))
     if config_file:
-        shutil.copy(config_file, os.path.join(target_folder, os.path.basename(config_file)))
+        shutil.copy(
+            config_file, os.path.join(target_folder, os.path.basename(config_file))
+        )
 
     return f"Files moved to folder {target_folder}"
 
@@ -247,7 +249,9 @@ def refresh_pth_and_index_list():
 # Export Pth and Index Files
 def export_pth(pth_path):
     allowed_paths = get_pth_list()
-    normalized_allowed_paths = [os.path.abspath(os.path.join(now_dir, p)) for p in allowed_paths]
+    normalized_allowed_paths = [
+        os.path.abspath(os.path.join(now_dir, p)) for p in allowed_paths
+    ]
     normalized_pth_path = os.path.abspath(os.path.join(now_dir, pth_path))
 
     if normalized_pth_path in normalized_allowed_paths:
@@ -259,7 +263,9 @@ def export_pth(pth_path):
 
 def export_index(index_path):
     allowed_paths = get_index_list()
-    normalized_allowed_paths = [os.path.abspath(os.path.join(now_dir, p)) for p in allowed_paths]
+    normalized_allowed_paths = [
+        os.path.abspath(os.path.join(now_dir, p)) for p in allowed_paths
+    ]
     normalized_index_path = os.path.abspath(os.path.join(now_dir, index_path))
 
     if normalized_index_path in normalized_allowed_paths:

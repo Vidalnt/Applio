@@ -351,7 +351,9 @@ def run_tts_script(
 
     tts_script_path = os.path.join("rvc", "lib", "tools", "tts.py")
 
-    if os.path.exists(output_tts_path) and os.path.abspath(output_tts_path).startswith(os.path.abspath("assets")):
+    if os.path.exists(output_tts_path) and os.path.abspath(output_tts_path).startswith(
+        os.path.abspath("assets")
+    ):
         os.remove(output_tts_path)
 
     command_tts = [

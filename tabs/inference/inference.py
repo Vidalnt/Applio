@@ -317,7 +317,9 @@ def create_folder_and_move_files(folder_name, bin_file, config_file):
     if bin_file:
         shutil.copy(bin_file, os.path.join(target_folder, os.path.basename(bin_file)))
     if config_file:
-        shutil.copy(config_file, os.path.join(target_folder, os.path.basename(config_file)))
+        shutil.copy(
+            config_file, os.path.join(target_folder, os.path.basename(config_file))
+        )
 
     return f"Files moved to folder {target_folder}"
 
@@ -339,7 +341,9 @@ def refresh_embedders_folders():
 def get_speakers_id(model):
     if model:
         try:
-            model_data = torch.load(os.path.join(now_dir, model), map_location="cpu", weights_only=True)
+            model_data = torch.load(
+                os.path.join(now_dir, model), map_location="cpu", weights_only=True
+            )
             speakers_id = model_data.get("speakers_id")
             if speakers_id:
                 return list(range(speakers_id))

@@ -62,4 +62,5 @@ jobs:
           pip install uv
           uv venv
           uv pip install -r requirements.txt
-          uv pip uninstall torch torchvision torchaudio -y
+          uv pip uninstall torch torchvision torchaudio
+          pwd

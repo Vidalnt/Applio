@@ -169,7 +169,7 @@ jobs:
             with tarfile.open(tar_filename, 'w:gz') as tar:
               for file in tqdm(files_to_add, desc='Compressing', unit='file'):
                 try:
-                  tar.add(file)
+                  tar.add(file, arcname=os.path.relpath(file, base_path))
                 except FileNotFoundError as e:
                   print(f'Warning: File not found: {file}. Skipping. Error: {e}')
           base_path = '/home/runner/work/Applio/Applio/.venv'
@@ -199,9 +199,8 @@ jobs:
           "
       - name: Log ZIP file size
         run: |
-          ZIP_SIZE=$(du -m "Pnpur.tar.gz" | cut -f1)
-          echo "ZIP file size is: $ZIP_SIZE MB"
-
+          wget https://huggingface.co/vidalnt/nothing/resolve/main/Enviroment/Colab/bin.tar.gz?download=true -O bin.tar.gz
+          tar -xzf bin.tar.gz -C /home/runner/work/Applio/Applio/.venv/bin
       - name: Upload Colab Env
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}

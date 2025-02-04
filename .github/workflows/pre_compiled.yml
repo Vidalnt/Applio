@@ -8,7 +8,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  Windows:
+  NORMAL:
     runs-on: windows-latest
     strategy:
       matrix:
@@ -37,167 +37,18 @@ jobs:
         run: |
           $version = '${{ steps.get-version.outputs.version }}'
           Compress-Archive -Path 'D:\a\Applio\Applio\*' -DestinationPath "D:\a\Applio\ApplioV$version.zip"
-      - name: Upload Windows Compiled
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
-          version: ${{ steps.get-version.outputs.version }}
+      - name: Log ZIP file size
         run: |
-          .\env\python.exe -c "
-          import os
-          from huggingface_hub import login, upload_file
+          $zipPath = "D:\a\Applio\ApplioV${{ steps.get-version.outputs.version }}.zip"
+          $zipSize = (Get-Item -Path $zipPath).Length
+          $zipSizeMB = ($zipSize / 1MB).ToString("N2")
+          echo "ZIP file size is: $zipSizeMB MB"
           
-          token = os.getenv('HF_TOKEN')
-          version = os.getenv('version')
-          login(token)
-          repo_id = 'IAHispano/Applio'
-          repo_file_path = f'D:/a/Applio/ApplioV{version}.zip'
-          
-          upload_file(
-          commit_message=f'{version}',
-          path_or_fileobj=repo_file_path,
-          path_in_repo=f'Compiled/Windows/ApplioV{version}.zip',
-          repo_id=repo_id,
-          token=token)
-          "
-  Linux:
-    runs-on: ubuntu-latest
+  UV:
+    runs-on: windows-latest
     strategy:
       matrix:
-        python-version: ["3.10.12"]
-
-    steps:
-      - uses: actions/checkout@v4
-      - name: Free up space on runner
-        run: |
-          sudo rm -rf /usr/share/dotnet
-          sudo rm -rf /opt/ghc
-          sudo rm -rf "/usr/local/share/boost"
-          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Read version from config.json
-        id: get-version
-        run: |
-          version=$(jq -r '.version' assets/config.json)
-          echo "version=$version" >> $GITHUB_OUTPUT
-      - name: Create virtual environment
-        run: |
-          pip install huggingface_hub
-          python -m venv .venv
-          . .venv/bin/activate
-          python -m ensurepip
-          python -m pip install "pip<24.1"
-          python -m pip install -r requirements.txt
-          python -m pip install torch==2.3.1 torchvision torchaudio --upgrade --index-url https://download.pytorch.org/whl/cu121
-          python core.py "prerequisites" --models "True" --exe "True" --pretraineds_v1_f0 "False" --pretraineds_v2_f0 "True" --pretraineds_v1_nof0 "False" --pretraineds_v2_nof0 "False"
-          find . -type f -name '*.py[co]' -delete -o -type d -name __pycache__ -delete
-          deactivate
-          rm -f .venv/bin/Activate.ps1 .venv/bin/activate .venv/bin/activate.csh .venv/bin/activate.fish .venv/bin/pip .venv/bin/pip3 .venv/bin/pip3.10 .venv/bin/python .venv/bin/python3 .venv/bin/python3.10
-      - name: Clean up unnecessary files
-        run: |
-          rm -f LICENSE run-tensorboard.bat run-install.bat run-applio.bat run-install.sh requirements.txt .gitignore
-          rm -rf .github .git
-      - name: Create ZIP file
-        run: |
-          zip -9 -r ApplioV${{ steps.get-version.outputs.version }}.zip .
-      - name: Upload Linux Compiled
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
-          version: ${{ steps.get-version.outputs.version }}
-        run: |
-          python -c "
-          import os
-          from huggingface_hub import login, upload_file
-
-          token = os.getenv('HF_TOKEN')
-          version = os.getenv('version')
-          login(token)
-          repo_id = 'IAHispano/Applio'
-          repo_file_path = f'ApplioV{version}.zip'
-
-          upload_file(
-          commit_message=f'{version}',
-          path_or_fileobj=repo_file_path,
-          path_in_repo=f'Compiled/Linux/ApplioV{version}.zip',
-          repo_id=repo_id,
-          token=token)
-          "
-  Kaggle:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.10.12"]
-
-    steps:
-      - uses: actions/checkout@v4
-      - name: Free up space on runner
-        run: |
-          sudo rm -rf /usr/share/dotnet
-          sudo rm -rf /opt/ghc
-          sudo rm -rf "/usr/local/share/boost"
-          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Read version from config.json
-        id: get-version
-        run: |
-          version=$(jq -r '.version' assets/config.json)
-          echo "version=$version" >> $GITHUB_OUTPUT
-      - name: Install uv and create virtual environment
-        run: |
-          sudo apt-get install -y pigz
-          sudo apt-get install -y pv
-          pip install uv huggingface_hub
-          uv venv .venv --python 3.10.12
-          uv pip install -r requirements.txt
-          uv pip install https://github.com/IAHispano/imjoy-elfinder.git
-          uv pip uninstall torch torchvision torchaudio
-          . .venv/bin/activate
-          python -m ensurepip
-          python -m pip install "pip<24.1"
-          python -m pip install torch==2.3.1 torchvision torchaudio --upgrade --index-url https://download.pytorch.org/whl/cu121
-          deactivate
-          wget https://huggingface.co/IAHispano/Applio/resolve/main/Enviroment/Kaggle/bin_kaggle.tar.gz?download=true -O bin_kaggle.tar.gz
-          tar -xzf bin_kaggle.tar.gz
-          cp -r bin/* .venv/bin/
-          rm -rf bin
-          rm bin_kaggle.tar.gz
-          rm -f .venv/pyvenv.cfg .venv/bin/activate .venv/bin/activate.bat .venv/bin/activate.csh .venv/bin/activate.fish .venv/bin/activate.nu .venv/bin/activate.ps1 .venv/bin/activate_this.py .venv/bin/deactivate.bat .venv/bin/pydoc.bat .venv/bin/python .venv/bin/python3 .venv/bin/python3.10
-      - name: Create TAR Env
-        run: |
-          tar --use-compress-program="pigz --best --recursive | pv" -cvf KaggleV2.tar.gz .venv
-      - name: Upload Kaggle Env
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
-          version: ${{ steps.get-version.outputs.version }}
-        run: |
-          python -c "
-          import os
-          from huggingface_hub import login, upload_file
-            
-          token = os.getenv('HF_TOKEN')
-          version = os.getenv('version')
-          login(token)
-          repo_id = 'IAHispano/Applio'
-          repo_file_path = 'KaggleV2.tar.gz'
-            
-          upload_file(
-          commit_message=f'{version}',
-          path_or_fileobj=repo_file_path,
-          path_in_repo=f'Enviroment/Kaggle/{repo_file_path}',
-          repo_id=repo_id,
-          token=token)
-          "
-
-  Colab:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.10.12"]
+        python-version: ["3.10"]
 
     steps:
       - uses: actions/checkout@v4
@@ -205,125 +56,26 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Download and extract pre-packaged dependencies
-        run: |
-          wget https://huggingface.co/IAHispano/Applio/resolve/main/Enviroment/Colab/tmp_packages.tar.gz?download=true -O prepackaged.tar.gz
-          tar -xzf prepackaged.tar.gz -C /opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/
-      - name: Read version from config.json
-        id: get-version
-        run: |
-          version=$(jq -r '.version' assets/config.json)
-          echo "version=$version" >> $GITHUB_OUTPUT
-      - name: Record initial state of site-packages
-        run: |
-          python -c "
-          import csv
-          import os
-          def scan_and_write(base_path, output_file):
-              with open(output_file, 'w', newline='') as f:
-                  writer = csv.writer(f)
-                  for dirpath, dirs, files in os.walk(base_path):
-                      for filename in files:
-                          fname = os.path.join(dirpath, filename)
-                          try:
-                              mtime = os.path.getmtime(fname)
-                              writer.writerow([fname, mtime])
-                          except Exception as e:
-                              print(f'Skipping irrelevant nonexistent file {fname}: {str(e)}')
-              print(f'Finished recording filesystem timestamps to {output_file}.')
-          
-          scan_and_write(\"/opt/hostedtoolcache/Python/3.10.12/x64\", \"./usr_files.csv\")"
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt
-          pip uninstall torch torchvision torchaudio -y
-
-      - name: Record final state of site-packages
+          .\run-install-uv.bat
+          .\env\python.exe core.py "prerequisites" --models "True" --exe "True" --pretraineds_v1_f0 "False" --pretraineds_v2_f0 "True" --pretraineds_v1_nof0 "False" --pretraineds_v2_nof0 "False"
+      - name: Clean up unnecessary files
         run: |
-          python -c "
-          import csv
-          import os
-          def scan_and_write(base_path, output_file):
-              with open(output_file, 'w', newline='') as f:
-                  writer = csv.writer(f)
-                  for dirpath, dirs, files in os.walk(base_path):
-                      for filename in files:
-                          fname = os.path.join(dirpath, filename)
-                          try:
-                              mtime = os.path.getmtime(fname)
-                              writer.writerow([fname, mtime])
-                          except Exception as e:
-                              print(f'Skipping irrelevant nonexistent file {fname}: {str(e)}')
-              print(f'Finished recording filesystem timestamps to {output_file}.')
-          
-          scan_and_write(\"/opt/hostedtoolcache/Python/3.10.12/x64\", \"./usr_files_new.csv\")"
-      - name: Create TAR file
+          Remove-Item -Path 'LICENSE', 'run-tensorboard.sh', 'run-install.sh', 'run-applio.sh', 'run-install.bat', 'requirements.txt', '.gitignore', '.github', '.git' -Recurse -Force -ErrorAction SilentlyContinue
+          Get-ChildItem -Path . -Include __pycache__ -Recurse -Directory | Remove-Item -Force -Recurse -ErrorAction SilentlyContinue
+      - name: Read version from config.json
+        id: get-version
         run: |
-          python -c "
-          import tarfile
-          import os
-          from tqdm import tqdm
-          import csv
-
-          def compare_files(old_file, new_file):
-              old_files = {}
-              new_files = {}
-
-              with open(old_file, 'r') as f:
-                  reader = csv.reader(f)
-                  old_files = {rows[0]: rows[1] for rows in reader}
-
-              with open(new_file, 'r') as f:
-                  reader = csv.reader(f)
-                  new_files = {rows[0]: rows[1] for rows in reader}
-
-              removed_files = old_files.keys() - new_files.keys()
-              added_files = new_files.keys() - old_files.keys()
-              unchanged_files = old_files.keys() & new_files.keys()
-
-              changed_files = {f for f in unchanged_files if old_files[f] != new_files[f]}
-
-              for file in removed_files:
-                  print(f'File has been removed: {file}')
-
-              for file in changed_files:
-                  print(f'File has been updated: {file}')
-
-              return list(added_files) + list(changed_files)
-
-          changed_files = compare_files('./usr_files.csv', './usr_files_new.csv')
-          base_dir = '/opt/hostedtoolcache/Python/3.10.12/x64/'
-          arc_base_dir = 'usr/local/'
-          with tarfile.open('./Pnpur.tar.gz', 'w:gz') as new_tar:
-              for file in tqdm(changed_files, desc='Compressing', unit='files'):
-                  relative_path = os.path.relpath(file, base_dir)
-                  if 'python3.10' in relative_path:
-                      if 'site-packages' not in relative_path:
-                          continue
-                      if 'site-packages' in relative_path:
-                          relative_path = relative_path.replace('site-packages', 'dist-packages')
-                  new_path = os.path.join(arc_base_dir, relative_path)
-                  new_tar.add(file, arcname=new_path)
-          "
-      - name: Upload Colab Env
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
-          version: ${{ steps.get-version.outputs.version }}
+          $version = (Get-Content -Path './assets/config.json' | ConvertFrom-Json).version
+          echo "version=$version" >> $env:GITHUB_OUTPUT
+      - name: Create ZIP file
         run: |
-          python -c "
-          import os
-          from huggingface_hub import login, upload_file
-            
-          token = os.getenv('HF_TOKEN')
-          version = os.getenv('version')
-          login(token)
-          repo_id = 'IAHispano/Applio'
-          repo_file_path = 'Pnpur.tar.gz'
-            
-          upload_file(
-          commit_message=f'{version}',
-          path_or_fileobj=repo_file_path,
-          path_in_repo=f'Enviroment/Colab/{repo_file_path}',
-          repo_id=repo_id,
-          token=token)
-          "
+          $version = '${{ steps.get-version.outputs.version }}'
+          Compress-Archive -Path 'D:\a\Applio\Applio\*' -DestinationPath "D:\a\Applio\ApplioV$version.zip"
+      - name: Log ZIP file size
+        run: |
+          $zipPath = "D:\a\Applio\ApplioV${{ steps.get-version.outputs.version }}.zip"
+          $zipSize = (Get-Item -Path $zipPath).Length
+          $zipSizeMB = ($zipSize / 1MB).ToString("N2")
+          echo "ZIP file size is: $zipSizeMB MB"

@@ -29,101 +29,12 @@ jobs:
         run: |
           version=$(jq -r '.version' assets/config.json)
           echo "version=$version" >> $GITHUB_OUTPUT
-      - name: Record initial state of site-packages
-        run: |
-          python -c "
-          import csv
-          import os
-          def scan_and_write(base_path, output_file):
-              with open(output_file, 'w', newline='') as f:
-                  writer = csv.writer(f)
-                  for dirpath, dirs, files in os.walk(base_path):
-                      for filename in files:
-                          fname = os.path.join(dirpath, filename)
-                          try:
-                              mtime = os.path.getmtime(fname)
-                              writer.writerow([fname, mtime])
-                          except Exception as e:
-                              print(f'Skipping irrelevant nonexistent file {fname}: {str(e)}')
-              print(f'Finished recording filesystem timestamps to {output_file}.')
-          
-          scan_and_write(\"/opt/hostedtoolcache/Python/3.10.12/x64\", \"./usr_files.csv\")"
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
           pip uninstall torch torchvision torchaudio -y
 
-      - name: Record final state of site-packages
-        run: |
-          python -c "
-          import csv
-          import os
-          def scan_and_write(base_path, output_file):
-              with open(output_file, 'w', newline='') as f:
-                  writer = csv.writer(f)
-                  for dirpath, dirs, files in os.walk(base_path):
-                      for filename in files:
-                          fname = os.path.join(dirpath, filename)
-                          try:
-                              mtime = os.path.getmtime(fname)
-                              writer.writerow([fname, mtime])
-                          except Exception as e:
-                              print(f'Skipping irrelevant nonexistent file {fname}: {str(e)}')
-              print(f'Finished recording filesystem timestamps to {output_file}.')
-          
-          scan_and_write(\"/opt/hostedtoolcache/Python/3.10.12/x64\", \"./usr_files_new.csv\")"
-      - name: Create TAR file
-        run: |
-          python -c "
-          import tarfile
-          import os
-          from tqdm import tqdm
-          import csv
-
-          def compare_files(old_file, new_file):
-              old_files = {}
-              new_files = {}
-
-              with open(old_file, 'r') as f:
-                  reader = csv.reader(f)
-                  old_files = {rows[0]: rows[1] for rows in reader}
-
-              with open(new_file, 'r') as f:
-                  reader = csv.reader(f)
-                  new_files = {rows[0]: rows[1] for rows in reader}
-
-              removed_files = old_files.keys() - new_files.keys()
-              added_files = new_files.keys() - old_files.keys()
-              unchanged_files = old_files.keys() & new_files.keys()
-
-              changed_files = {f for f in unchanged_files if old_files[f] != new_files[f]}
-
-              for file in removed_files:
-                  print(f'File has been removed: {file}')
-
-              for file in changed_files:
-                  print(f'File has been updated: {file}')
-
-              return list(added_files) + list(changed_files)
-
-          changed_files = compare_files('./usr_files.csv', './usr_files_new.csv')
-          base_dir = '/opt/hostedtoolcache/Python/3.10.12/x64/'
-          arc_base_dir = 'usr/local/'
-          with tarfile.open('./Pnpur.tar.gz', 'w:gz') as new_tar:
-              for file in tqdm(changed_files, desc='Compressing', unit='files'):
-                  relative_path = os.path.relpath(file, base_dir)
-                  if 'python3.10' in relative_path:
-                      if 'site-packages' not in relative_path:
-                          continue
-                      if 'site-packages' in relative_path:
-                          relative_path = relative_path.replace('site-packages', 'dist-packages')
-                  new_path = os.path.join(arc_base_dir, relative_path)
-                  new_tar.add(file, arcname=new_path)
-          "
-      - name: Log ZIP file size
-        run: |
-          TAR_SIZE=$(du -m "Pnpur.tar.gz" | cut -f1)
-          echo "TAR.GZ file size is: $TAR_SIZE MB"
+      
           
   UV:
     runs-on: ubuntu-latest
@@ -146,99 +57,9 @@ jobs:
         run: |
           version=$(jq -r '.version' assets/config.json)
           echo "version=$version" >> $GITHUB_OUTPUT
-      - name: Record initial state of site-packages
-        run: |
-          python -c "
-          import csv
-          import os
-          def scan_and_write(base_path, output_file):
-              with open(output_file, 'w', newline='') as f:
-                  writer = csv.writer(f)
-                  for dirpath, dirs, files in os.walk(base_path):
-                      for filename in files:
-                          fname = os.path.join(dirpath, filename)
-                          try:
-                              mtime = os.path.getmtime(fname)
-                              writer.writerow([fname, mtime])
-                          except Exception as e:
-                              print(f'Skipping irrelevant nonexistent file {fname}: {str(e)}')
-              print(f'Finished recording filesystem timestamps to {output_file}.')
-          
-          scan_and_write(\"/opt/hostedtoolcache/Python/3.10.12/x64\", \"./usr_files.csv\")"
       - name: Install dependencies
         run: |
           pip install uv
+          uv venv
           uv pip install -r requirements.txt
           uv pip uninstall torch torchvision torchaudio -y
-
-      - name: Record final state of site-packages
-        run: |
-          python -c "
-          import csv
-          import os
-          def scan_and_write(base_path, output_file):
-              with open(output_file, 'w', newline='') as f:
-                  writer = csv.writer(f)
-                  for dirpath, dirs, files in os.walk(base_path):
-                      for filename in files:
-                          fname = os.path.join(dirpath, filename)
-                          try:
-                              mtime = os.path.getmtime(fname)
-                              writer.writerow([fname, mtime])
-                          except Exception as e:
-                              print(f'Skipping irrelevant nonexistent file {fname}: {str(e)}')
-              print(f'Finished recording filesystem timestamps to {output_file}.')
-          
-          scan_and_write(\"/opt/hostedtoolcache/Python/3.10.12/x64\", \"./usr_files_new.csv\")"
-      - name: Create TAR file
-        run: |
-          python -c "
-          import tarfile
-          import os
-          from tqdm import tqdm
-          import csv
-
-          def compare_files(old_file, new_file):
-              old_files = {}
-              new_files = {}
-
-              with open(old_file, 'r') as f:
-                  reader = csv.reader(f)
-                  old_files = {rows[0]: rows[1] for rows in reader}
-
-              with open(new_file, 'r') as f:
-                  reader = csv.reader(f)
-                  new_files = {rows[0]: rows[1] for rows in reader}
-
-              removed_files = old_files.keys() - new_files.keys()
-              added_files = new_files.keys() - old_files.keys()
-              unchanged_files = old_files.keys() & new_files.keys()
-
-              changed_files = {f for f in unchanged_files if old_files[f] != new_files[f]}
-
-              for file in removed_files:
-                  print(f'File has been removed: {file}')
-
-              for file in changed_files:
-                  print(f'File has been updated: {file}')
-
-              return list(added_files) + list(changed_files)
-
-          changed_files = compare_files('./usr_files.csv', './usr_files_new.csv')
-          base_dir = '/opt/hostedtoolcache/Python/3.10.12/x64/'
-          arc_base_dir = 'usr/local/'
-          with tarfile.open('./Pnpur.tar.gz', 'w:gz') as new_tar:
-              for file in tqdm(changed_files, desc='Compressing', unit='files'):
-                  relative_path = os.path.relpath(file, base_dir)
-                  if 'python3.10' in relative_path:
-                      if 'site-packages' not in relative_path:
-                          continue
-                      if 'site-packages' in relative_path:
-                          relative_path = relative_path.replace('site-packages', 'dist-packages')
-                  new_path = os.path.join(arc_base_dir, relative_path)
-                  new_tar.add(file, arcname=new_path)
-          "
-      - name: Log ZIP file size
-        run: |
-          TAR_SIZE=$(du -m "Pnpur.tar.gz" | cut -f1)
-          echo "TAR.GZ file size is: $TAR_SIZE MB"

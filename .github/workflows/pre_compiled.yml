@@ -51,7 +51,8 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-          pip uninstall torch torchvision torchaudio -y
+          pip install torch==2.3.1 torchvision==0.18.1 torchaudio==2.3.1 --upgrade --index-url https://download.pytorch.org/whl/cu121
+          pip install numpy==1.23.5
       - name: Record final state of site-packages
         run: |
           python -c "
@@ -151,9 +152,10 @@ jobs:
         run: |
           sudo apt-get install -y pigz
           pip install uv
-          uv venv
+          uv venv .venv
           uv pip install -r requirements.txt
-          uv pip uninstall torch torchvision torchaudio
+          uv pip install torch==2.3.1 torchvision==0.18.1 torchaudio==2.3.1 --upgrade --index-url https://download.pytorch.org/whl/cu121
+          uv pip install numpy==1.23.5
       - name: Tar the .venv directory
         run: |
           tar --use-compress-program="pigz --best --recursive" -cvf Pnpur.tar.gz .venv
